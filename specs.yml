@@ -1,0 +1,34 @@
+  # ==============================================================================
+  # GAME SPECIFICATION INPUT
+  # ==============================================================================
+  GAME_TITLE: "Chrono Drift 3D"
+  GENRE_ARCHETYPE: "Endless Runner / Lane Switcher" # Options: Endless Runner, Arena Survival, 3D Platformer, Rail Shooter, Arcade Racer
+  CAMERA_PERSPECTIVE: "Third-Person Behind Runner (FOV 80-85, tilted downward 15 deg)"
+  TARGET_ENGINE: "Godot 4.3+ / 4.7+ (Forward+ / Mobile Renderer, Jolt 3D Physics)"
+  
+  CORE_GAMEPLAY_LOOP: >
+    The player controls a futuristic hovercraft accelerating across an infinite procedurally
+    generated neon highway. Dodge obstacles (barricades, plasma walls), collect energy cells
+    for speed boosts, destroy security drones with pulse lasers, and trigger bullet-time slowdowns
+    when hazards become dense. The run ends when player health depletes.
+  
+  KEY_MECHANICS:
+    - Movement: 3 discrete lanes (-3.6m, 0.0m, +3.6m) with exponential smoothing kinematics
+    - Actions: Left/Right lane shift, Jump/Hover (W / Up), Slide/Dodge (S / Down), Pulse Laser (Space / Left Click)
+    - Time Dilation: Slow-motion mechanic that scales Engine.time_scale to 0.45 for 4 seconds
+    - Progression: Dynamic speed scaling that increases difficulty every 30 seconds
+  
+  SCORING_AND_HIGH_SCORES:
+    - Distance: 10 points per meter traveled
+    - Pickups: Energy Cells (+150 pts), Chrono Orbs (+300 pts)
+    - Combat: Drones destroyed (+500 pts)
+    - Combo Multiplier: Scales with consecutive successful dodges without taking damage
+    - Persistence: Store high scores, total distance, max combo, and runs played in user://game_save.json
+  
+  AUDIO_AND_VISUAL_THEME:
+    - Aesthetic: Cyberpunk / Synthwave (Dark obsidian road, glowing neon lanes, wireframe mountains, low-poly sun)
+    - Threat vs. Reward Hierarchy:
+      - Threats (Enemies, Hazard Walls): Crimson red (#FF0033), Vermilion (#FF4500), dark obsidian cores, ground warning crosshairs
+      - Rewards (Energy Cells, Time Orbs): Pure Solar Gold (#FFD700) and Electric Cyan (#00FFFF), floating hover tween, ground halo rings
+    - Audio: Dynamic background synth tracks, low-pass filter on pause/slowmo, procedural UI hover/click sounds
+  # ==============================================================================
