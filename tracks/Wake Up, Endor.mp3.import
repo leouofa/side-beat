@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dcq0qwvsica4g"
+path="res://.godot/imported/Wake Up, Endor.mp3-320290dd475088a43cc208406f2d206a.mp3str"
+
+[deps]
+
+source_file="res://tracks/Wake Up, Endor.mp3"
+dest_files=["res://.godot/imported/Wake Up, Endor.mp3-320290dd475088a43cc208406f2d206a.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

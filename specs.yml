@@ -1,34 +1,464 @@
-  # ==============================================================================
-  # GAME SPECIFICATION INPUT
-  # ==============================================================================
-  GAME_TITLE: "Chrono Drift 3D"
-  GENRE_ARCHETYPE: "Endless Runner / Lane Switcher" # Options: Endless Runner, Arena Survival, 3D Platformer, Rail Shooter, Arcade Racer
-  CAMERA_PERSPECTIVE: "Third-Person Behind Runner (FOV 80-85, tilted downward 15 deg)"
-  TARGET_ENGINE: "Godot 4.3+ / 4.7+ (Forward+ / Mobile Renderer, Jolt 3D Physics)"
-  
-  CORE_GAMEPLAY_LOOP: >
-    The player controls a futuristic hovercraft accelerating across an infinite procedurally
-    generated neon highway. Dodge obstacles (barricades, plasma walls), collect energy cells
-    for speed boosts, destroy security drones with pulse lasers, and trigger bullet-time slowdowns
-    when hazards become dense. The run ends when player health depletes.
-  
-  KEY_MECHANICS:
-    - Movement: 3 discrete lanes (-3.6m, 0.0m, +3.6m) with exponential smoothing kinematics
-    - Actions: Left/Right lane shift, Jump/Hover (W / Up), Slide/Dodge (S / Down), Pulse Laser (Space / Left Click)
-    - Time Dilation: Slow-motion mechanic that scales Engine.time_scale to 0.45 for 4 seconds
-    - Progression: Dynamic speed scaling that increases difficulty every 30 seconds
-  
-  SCORING_AND_HIGH_SCORES:
-    - Distance: 10 points per meter traveled
-    - Pickups: Energy Cells (+150 pts), Chrono Orbs (+300 pts)
-    - Combat: Drones destroyed (+500 pts)
-    - Combo Multiplier: Scales with consecutive successful dodges without taking damage
-    - Persistence: Store high scores, total distance, max combo, and runs played in user://game_save.json
-  
-  AUDIO_AND_VISUAL_THEME:
-    - Aesthetic: Cyberpunk / Synthwave (Dark obsidian road, glowing neon lanes, wireframe mountains, low-poly sun)
-    - Threat vs. Reward Hierarchy:
-      - Threats (Enemies, Hazard Walls): Crimson red (#FF0033), Vermilion (#FF4500), dark obsidian cores, ground warning crosshairs
-      - Rewards (Energy Cells, Time Orbs): Pure Solar Gold (#FFD700) and Electric Cyan (#00FFFF), floating hover tween, ground halo rings
-    - Audio: Dynamic background synth tracks, low-pass filter on pause/slowmo, procedural UI hover/click sounds
-  # ==============================================================================
+# ==============================================================================
+# GAME SPECIFICATION INPUT — SIDE BEAT
+# ==============================================================================
+GAME_TITLE: "Side Beat"
+GENRE_ARCHETYPE: "2.5D Belt-Scroller Beat 'Em Up / Arcade Tag-Morph Fighter"
+CAMERA_PERSPECTIVE: >
+  Side-Scrolling 2.5D Arcade Camera (FOV 50-55, pitched downward 12 deg, tracking X
+  with smooth look-ahead, locked during "GO!" wave arenas and Boss showdowns; shallow
+  Z-corridor [-3.2m, +3.2m] with characters locked to crisp left/right fighting stances)
+TARGET_ENGINE: "Godot 4.7+ (Forward+ Renderer, Jolt 3D Physics)"
+
+CORE_GAMEPLAY_LOOP: >
+  Battle across a procedurally generated 7-stage Urban World Tour (New York City,
+  Los Angeles, Madrid, Moscow, London, Tokyo, and Rome) in a crisp low-poly 3D
+  arcade beat-'em-up. At any frame—including mid-string or mid-air—the player can
+  zero-cooldown Shared-Soul Morph between four mythic gods (Endor, Ir, Osiris, and
+  Horus) sharing a single health pool and chaining weapon stances and pantheon powers
+  into freeform fighting-game combos. Clear "GO!" street wave arenas, smash urban
+  props for pickups, and defeat 12 mythic bosses—Chadzug (Gnome God), Beebo (Bird God),
+  Chupar (Overweight Humanoid God), Bar (Bird God), Dadur (Cow God), Baphomet (Cow God),
+  Andruas (Snake God), Beezelbub (Fly God), Baba (Long-Headed Bird God), Devil, Satan,
+  and Lucifer—set to a curated 37-track soundtrack.
+
+KEY_MECHANICS:
+  - Movement_2_5D: >
+      Free X-axis horizontal run/walk, Y-axis jump and aerial juggle physics, and
+      bounded Z-depth belt corridor (-3.2m to +3.2m) for flanking crowds and dodging
+      boss AoEs while preserving strict left/right fighting-game facing.
+  - Shared_Soul_Morph: >
+      1 active god on-screen with a unified Shared HP Pool and Shared Pantheon Meter.
+      Instant zero-cooldown morphing (Keys 1-4 / D-Pad / Shoulder Cycle) swaps mesh,
+      weapon socket, hitbox profile, and moveset in-place while preserving velocity,
+      airborne state, facing, and active combo counter.
+  - Fighting_Game_Combat: >
+      Light Attack (fast jab/poke), Heavy Attack (launcher/guard-crush), Pantheon
+      Special (consumes Pantheon Charge), Directional Command Normals, Block/Perfect
+      Parry, Grab/Throw, and Hitstop frame-freeze (3-7 frames) for arcade impact.
+  - Cross_Pantheon_Resonance: >
+      Chaining hits across multiple gods within a single combo builds Resonance Rank
+      (D -> C -> B -> A -> S -> GODLIKE), boosting Pantheon Meter gain and score multiplier.
+  - Urban_Interactables: >
+      Destructible city props (fire hydrants, neon signs, cafe tables, metro barriers,
+      arcade cabinets, street crates) drop street food heals, score gems, and meter orbs.
+
+SCORING_AND_HIGH_SCORES:
+  - Enemy_KO: Street Thugs (+250 pts), Bruisers/Enforcers (+600 pts), Cult Elites (+1,200 pts)
+  - Boss_KO: Mid-Bosses Chadzug, Chupar, Dadur, Andruas, Baba (+6,000 pts each); Stage Bosses Beebo, Bar, Baphomet, Beezelbub, Devil, Satan (+10,000 pts each); Final Boss Lucifer (+25,000 pts)
+  - Combo_And_Morph_Bonus: +50 pts per hit scaled by Cross-Pantheon Variety Multiplier (up to 4.0x when all 4 gods contribute to a combo)
+  - Stage_Ranks: End-of-city arcade grading (C / B / A / S) based on clear time, max combo, damage taken, and stylish morph variety
+  - Pickups: Score Bullion (+500 pts), Pantheon Sparks (+25% Special Meter), Street Feast (+30% Shared HP)
+  - Persistence: Store top 10 arcade leaderboard, per-city best ranks, highest combo, and unlocked jukebox tracks in user://game_save.json
+
+AUDIO_AND_VISUAL_THEME:
+  - Aesthetic: >
+      Crisp Low-Poly Arcade Fighter (Virtua Fighter / Tekken 2-3 / Indie Retro 3D)—flat
+      and faceted shading, sharp geometric silhouettes, bold vertex/palette colors,
+      contrasted against gritty stylized real-world urban streets.
+  - Threat_vs_Reward_Hierarchy:
+      - Player_Morph_Flashes: Asgardian Cyan-Blue (#00D4FF) for Endor, Olympian Gold-White (#FFE066) for Ir, Duat Emerald-Violet (#2CE8A2) for Osiris, Solar Amber-Crimson (#FF7A00) for Horus
+      - Threats: Crimson (#FF1E42) ground telegraph zones, flash-red unblockable boss glints, high-contrast enemy rim outlines
+      - Rewards: Healing pickups in Lush Jade (#32FF7E), Pantheon Energy in Royal Gold (#FFD700) with rotating low-poly halo rings
+  - Audio: >
+      Curated 37-track soundtrack in res://tracks/ mapped across the 7 City Stages,
+      all 12 Bosses, and Menus with an arcade "Now Playing" HUD slide-in toast, crunchy
+      retro arcade hit-sparks/impact SFX, and low-pass filter ducking on pause/KO slow-mo.
+
+# ==============================================================================
+# PLAYABLE PANTHEON ROSTER (SHARED-SOUL MORPH)
+# ==============================================================================
+CHARACTERS:
+  morph_rules:
+    shared_hp_pool: 1000
+    shared_pantheon_meter_max: 100
+    morph_cooldown_sec: 0.0
+    morph_preserve_state: ["linear_velocity", "facing_direction", "is_on_floor", "combo_count", "hitstun_immunity_frames_2"]
+  roster:
+    - id: "endor"
+      name: "Endor"
+      pantheon: "Asgardian (Norse)"
+      input_slot: 1
+      archetype: "Heavy Armor-Breaker / Thunder Brawler"
+      signature_weapon: "Runic War-Hammer & Thunder Gauntlets"
+      color_palette: ["#00D4FF", "#1E3A5F", "#C8D6E5"]
+      stats:
+        move_speed: 5.2
+        attack_speed_mult: 0.85
+        damage_mult: 1.35
+        poise_hyper_armor: "High (uninterruptible during heavy hammer swings)"
+      pantheon_power:
+        name: "Bifrost Storm"
+        element: "Asgardian Thunder & Runic Shockwave"
+        moves:
+          - "Mjolnir Ground Shatter: AoE lightning shockwave along the Z-corridor that crumples blocking foes"
+          - "Thunderclap Charge: Hyper-armor shoulder tackle followed by hammer uppercut wall-bounce"
+          - "Asgard's Verdict (Super): Calls down pillars of Bifrost lightning across the locked arena"
+
+    - id: "ir"
+      name: "Ir"
+      pantheon: "Greek (Olympian)"
+      input_slot: 2
+      archetype: "High-Speed Rushdown / Parry & Flash-Step Striker"
+      signature_weapon: "Twin Olympic Blades & Aegis Cestus"
+      color_palette: ["#FFE066", "#FFFFFF", "#2E5EAA"]
+      stats:
+        move_speed: 7.4
+        attack_speed_mult: 1.30
+        damage_mult: 0.90
+        poise_hyper_armor: "Low (relies on frame-tight dashes and Aegis parries)"
+      pantheon_power:
+        name: "Olympian Radiance"
+        element: "Arcane Light & Olympic Lightning"
+        moves:
+          - "Flash-Step Flurry: Teleporting 6-hit twin-blade slice string that crosses through enemies"
+          - "Aegis Riposte: Instant counter-stance; parrying an attack triggers brief slow-mo and lightning stun"
+          - "Wrath of Olympus (Super): Blinding prism barrage of light spears pinning enemies for morph follow-ups"
+
+    - id: "osiris"
+      name: "Osiris"
+      pantheon: "Egyptian (Underworld / Duat)"
+      input_slot: 3
+      archetype: "Mid-Range Crowd Controller / Soul-Binder & Sustain"
+      signature_weapon: "Spectral Crook & Flail"
+      color_palette: ["#2CE8A2", "#6C3483", "#D4AC0D"]
+      stats:
+        move_speed: 5.8
+        attack_speed_mult: 1.00
+        damage_mult: 1.05
+        poise_hyper_armor: "Medium"
+      pantheon_power:
+        name: "Duat Judgment"
+        element: "Underworld Necromancy & Life-Force Drain"
+        moves:
+          - "Crook Vortex: Extended hook sweep that pulls scattered Z-lane enemies into a tight front cluster"
+          - "Soul Harvest: Spectral flail spin that leeches HP from struck foes directly into the Shared HP Pool"
+          - "Scales of Ma'at (Super): Erupts underworld obelisks and spectral hands that root all enemies on screen"
+
+    - id: "horus"
+      name: "Horus"
+      pantheon: "Egyptian (Sky & Sun)"
+      input_slot: 4
+      archetype: "Aerial Juggler / Dive-Kick & Solar Lance Specialist"
+      signature_weapon: "Winged Solar Spear & Falcon Talons"
+      color_palette: ["#FF7A00", "#FFD700", "#8E1600"]
+      stats:
+        move_speed: 6.8
+        attack_speed_mult: 1.15
+        damage_mult: 1.00
+        poise_hyper_armor: "Airborne Mobility (double jump + air-hover cancel)"
+      pantheon_power:
+        name: "Solar Falcon"
+        element: "Solar Fire & Sky Wind"
+        moves:
+          - "Skyward Ascent: Rising winged-spear launcher that lifts targets into extended air-combo state"
+          - "Falcon Meteor Dive: Steep 45-deg blazing talon dive-kick that ground-bounces enemies for Endor/Osiris pickups"
+          - "Eye of Ra-Horakhty (Super): Hovering mid-air solar beam sweep scorching the entire street lane"
+
+# ==============================================================================
+# BOSS ROSTER (12 MYTHIC BOSSES — MID-BOSSES & CITY STAGE BOSSES)
+# ==============================================================================
+BOSSES:
+  design_rules: >
+    Every boss operates like an arcade fighting-game opponent with readable startup
+    glints, super-armor thresholds broken by heavy strikes or parries, enrage phase
+    shifts at 50% HP, dedicated boss music, and clear Pantheon counter-synergies.
+  roster:
+    - id: "chadzug"
+      name: "Chadzug"
+      title: "Tunnel King of the Under-Cobble"
+      domain: "Gnome God"
+      encounter_tier: "Mid-Boss"
+      stage: 1
+      city: "New York City"
+      archetype: "Small-Hurtbox Trickster / Low-Sweep & Pickaxe Acrobat"
+      signature_attacks: ["Ankle-Biter Pickaxe Spin", "Subway Grate Burrow Ambush", "Gnome Cap Ricochet Dive"]
+      counter_synergy: "Hit his compact low hurtbox using Endor's Mjolnir Ground Shatter or Osiris's low Crook sweeps"
+
+    - id: "beebo"
+      name: "Beebo"
+      title: "Bird God of the Neon Roost"
+      domain: "Bird God"
+      encounter_tier: "Stage Boss"
+      stage: 1
+      city: "New York City"
+      archetype: "High-Agility Aerial Dive-Bomber"
+      signature_attacks: ["Skyline Talon Swoop", "Razor Feather Fan", "Gale-Force Wing Gust"]
+      counter_synergy: "Contest mid-air with Horus's Skyward Ascent or parry dive-kicks with Ir's Aegis Riposte"
+
+    - id: "chupar"
+      name: "Chupar"
+      title: "Glutton Sovereign of the Boulevard"
+      domain: "Overweight Humanoid God"
+      encounter_tier: "Mid-Boss"
+      stage: 2
+      city: "Los Angeles"
+      archetype: "Heavyweight Belly-Bouncer / Sumo Shockwave Grappler"
+      signature_attacks: ["Belly-Elastic Projectile & Strike Bounce", "Tremor Cannonball Sit-Drop", "Hundred-Palm Buffet Rush"]
+      counter_synergy: "Out-space grabs with Horus's Solar Spear pokes or break belly-armor with Endor's charged War-Hammer"
+
+    - id: "bar"
+      name: "Bar"
+      title: "Bird God of the Carrion Gale"
+      domain: "Bird God"
+      encounter_tier: "Stage Boss"
+      stage: 2
+      city: "Los Angeles"
+      archetype: "Z-Lane Storm Flyer & Sonic Grappler"
+      signature_attacks: ["Supersonic Screech Wave", "Cross-Boulevard Cyclone Glide", "Sky-Drop Talon Piledriver"]
+      counter_synergy: "Pull out of low glides with Osiris's Crook Vortex or counter-rush with Ir"
+
+    - id: "dadur"
+      name: "Dadur"
+      title: "Iron-Hide Bull of the Courtyard"
+      domain: "Cow God"
+      encounter_tier: "Mid-Boss"
+      stage: 3
+      city: "Madrid"
+      archetype: "Close-Range Bovine Wrestler & Headbutt Bruiser"
+      signature_attacks: ["Iron-Horn Suplex Grab", "Snorting Hoof Flurry", "Courtyard Wall-Pin Tackle"]
+      counter_synergy: "Perfect-parry headbutts with Ir's Aegis Riposte and juggle with Horus"
+
+    - id: "baphomet"
+      name: "Baphomet"
+      title: "Idol of the Brazen Horn"
+      domain: "Cow God"
+      encounter_tier: "Stage Boss"
+      stage: 3
+      city: "Madrid"
+      archetype: "Armored Bovine Juggernaut / Ritual Stampede Boss"
+      signature_attacks: ["Gran Via Bull-Rush Charge", "Molten Hoof Earthquake", "Brazen Horn Gore Throw"]
+      counter_synergy: "Crack super-armor with Endor's Runic War-Hammer and dodge Z-lane stampedes"
+
+    - id: "andruas"
+      name: "Andruas"
+      title: "Fang of the Frozen Conduit"
+      domain: "Snake God"
+      encounter_tier: "Mid-Boss"
+      stage: 4
+      city: "Moscow"
+      archetype: "Serpentine Whip-Zoner & Coil Constrictor"
+      signature_attacks: ["Full-Corridor Tail Whip Sweep", "Coiling Crush Bind", "Venom Fang Lunge"]
+      counter_synergy: "Jump over low tail sweeps into Horus Falcon Meteor Dives or flash-step inside coil range with Ir"
+
+    - id: "beezelbub"
+      name: "Beezelbub"
+      title: "Lord of the Plague Swarm"
+      domain: "Fly God"
+      encounter_tier: "Stage Boss"
+      stage: 4
+      city: "Moscow"
+      archetype: "Erratic Buzz-Dash Zoner & Swarm Summoner"
+      signature_attacks: ["Drone Fly Swarm Call", "Corrosive Venom Spit Pools", "Compound-Eye Strobe Evade"]
+      counter_synergy: "Clear summoned fly swarms and leech shared HP back using Osiris's Soul Harvest"
+
+    - id: "baba"
+      name: "Baba"
+      title: "Stalker of the Fogged Spire"
+      domain: "Long-Headed Bird God"
+      encounter_tier: "Mid-Boss"
+      stage: 5
+      city: "London"
+      archetype: "Long-Reach Spear-Beak Poker & Pendulum Cranium Striker"
+      signature_attacks: ["Half-Screen Spear-Beak Thrust", "Pendulum Long-Skull Hammer", "High-Stance Crane Kick Counter"]
+      counter_synergy: "Parry extended beak pokes with Ir's Aegis Riposte or close the gap through hyper-armor with Endor's Thunderclap Charge"
+
+    - id: "devil"
+      name: "Devil"
+      title: "The Crossroads Tempter"
+      domain: "Infernal Trickster"
+      encounter_tier: "Stage Boss"
+      stage: 5
+      city: "London"
+      archetype: "Teleporting Trident Duelist & Trap Setter"
+      signature_attacks: ["Brimstone Cross-Up Teleport", "Hellfire Sigil Floor Traps", "Infernal Pitchfork Skewer"]
+      counter_synergy: "Match speed and punish teleports with Ir's Flash-Step Flurry"
+
+    - id: "satan"
+      name: "Satan"
+      title: "Avatar of Abyssal Wrath"
+      domain: "Infernal Warlord"
+      encounter_tier: "Stage Boss"
+      stage: 6
+      city: "Tokyo"
+      archetype: "Colossal Heavy-Slash Berserker"
+      signature_attacks: ["Abyssal Cleaver Full-Lane Sweep", "Wrathful Enrage Armor", "Hell-Meteor Ground Crater"]
+      counter_synergy: "Weave aerial combos over ground sweeps with Horus and burst super-armor with Endor"
+
+    - id: "lucifer"
+      name: "Lucifer"
+      title: "The Fallen Morning Star"
+      domain: "Apex Fallen Seraph (2-Phase Final Boss)"
+      encounter_tier: "Final Boss"
+      stage: 7
+      city: "Rome"
+      archetype: "Six-Winged Fighting-Game Rival Boss"
+      signature_attacks:
+        - "Phase 1 (Morning Star): Blazing rapier combos, winged flash-parries, and solar-hellfire beams"
+        - "Phase 2 (Awakened Fall): Full-screen Fallen Seraph judgment pillars, air-dash grab chains, and stance shifts requiring all 4 Gods to counter"
+      counter_synergy: "Requires full 4-God Cross-Pantheon Resonance combos across both phases"
+
+# ==============================================================================
+# PROCEDURAL URBAN WORLD TOUR (7 CITY STAGES, 12 BOSS ENCOUNTERS)
+# ==============================================================================
+PROCEDURAL_LEVELS:
+  progression_mode: "Stage-Based Urban World Tour (7 Procedural City Stages)"
+  generation_algorithm:
+    chunk_length_m: 24.0
+    chunks_per_stage: [6, 8] # Entry -> Street Brawl -> Mid-Boss Arena (Stages 1-5) -> Plaza/Rooftop Brawl -> Stage Boss Arena
+    corridor_depth_z_m: [-3.2, 3.2]
+    lock_in_encounters: >
+      3 to 4 "GO!" camera-lock battle zones per stage with procedural enemy wave budgets,
+      flanking spawn doors/alleys/manholes, destructible urban props, Mid-Boss showdowns
+      on Stages 1-5, and a climactic Stage Boss arena in all 7 cities.
+  cities:
+    - stage: 1
+      city: "New York City"
+      sub_biomes: ["Neon Times Square Crosswalk", "Graffiti Subway Platform", "Hell's Kitchen Rooftop"]
+      hazards_and_props: ["Steam vents", "Yellow taxi barricades", "Fire hydrants (water knockback jet)"]
+      mid_boss_id: "chadzug" # Gnome God
+      stage_boss_id: "beebo" # Bird God
+    - stage: 2
+      city: "Los Angeles"
+      sub_biomes: ["Venice Boardwalk Muscle Pit", "Sunset Palm Boulevard", "Downtown Overpass"]
+      hazards_and_props: ["Arcade cabinets", "Palm planters", "Spotlight helicopters"]
+      mid_boss_id: "chupar" # Overweight Humanoid God
+      stage_boss_id: "bar" # Bird God
+    - stage: 3
+      city: "Madrid"
+      sub_biomes: ["Sunlit Terracotta Courtyard", "Gran Via Cobblestone Avenue", "Plaza Mayor Arena"]
+      hazards_and_props: ["Cafe tables & chairs", "Ornamental plaza fountains", "Wrought-iron lanterns"]
+      mid_boss_id: "dadur" # Cow God
+      stage_boss_id: "baphomet" # Cow God
+    - stage: 4
+      city: "Moscow"
+      sub_biomes: ["Frozen Rail Conduit", "Snow-Swept Boulevard", "Red-Brick Constructivist Depot"]
+      hazards_and_props: ["Ice slick patches", "Industrial oil drums (explosive)", "Armored freight containers"]
+      mid_boss_id: "andruas" # Snake God
+      stage_boss_id: "beezelbub" # Fly God
+    - stage: 5
+      city: "London"
+      sub_biomes: ["Foggy Thames Embankment", "Soho Neon Alleyway", "Clocktower Courtyard"]
+      hazards_and_props: ["Red phone booths", "Double-decker bus blockade", "Gaslight streetlamps"]
+      mid_boss_id: "baba" # Long-Headed Bird God
+      stage_boss_id: "devil"
+    - stage: 6
+      city: "Tokyo"
+      sub_biomes: ["Shibuya Rain-Slicked Crossing", "Kabukicho Lantern Arcade", "Shinkansen Viaduct"]
+      hazards_and_props: ["Vending machines", "Holographic signboards", "High-voltage transformer boxes"]
+      mid_boss_id: null
+      stage_boss_id: "satan"
+    - stage: 7
+      city: "Rome"
+      sub_biomes: ["Floodlit Travertine Piazza", "Shattered Colosseum Avenue", "Eclipse Pantheon Steps"]
+      hazards_and_props: ["Fallen marble columns", "Braziers of blue flame", "Fissured cobblestone rifts"]
+      mid_boss_id: null
+      stage_boss_id: "lucifer"
+
+# ==============================================================================
+# SOUNDTRACK CATALOG & CURATED STAGE PLAYLISTS (res://tracks/ — ALL 37 TRACKS)
+# ==============================================================================
+SOUNDTRACKS:
+  playback_system: >
+    Curated Stage & Boss Radio with 1.5s crossfades between street wave playlists,
+    Mid-Boss themes, and Stage Boss themes, accompanied by an arcade "NOW PLAYING"
+    HUD toast. Zero-cooldown character morphing does NOT restart or chop tracks.
+  asset_import_note: >
+    36 tracks are .mp3 (native Godot 4.7 AudioStreamMP3). Convert "res://tracks/Big Zeus.m4a"
+    to "res://tracks/Big Zeus.mp3" during asset prep so all 37 tracks import natively.
+  playlists:
+    menus_and_ui:
+      title_theme: "res://tracks/Pantheon in Neon.mp3"
+      character_and_tour_select: "res://tracks/Wake Up, Endor.mp3"
+      stage_clear_victory: "res://tracks/Sparkling After The War.mp3"
+      ending_credits: "res://tracks/Conquered Love.mp3"
+      game_over_continue: "res://tracks/The Mead Runs Out.mp3"
+    stage_1_new_york:
+      street_waves:
+        - "res://tracks/Beat to a Masterpiece.mp3"
+        - "res://tracks/Immortal Are Not Bulletproof.mp3"
+        - "res://tracks/No Problem.mp3"
+      mid_boss_chadzug: "res://tracks/Widjet.mp3"
+      boss_beebo: "res://tracks/Chump and the Thunder.mp3"
+    stage_2_los_angeles:
+      street_waves:
+        - "res://tracks/Silicon Smoke Signals.mp3"
+        - "res://tracks/Thunder in the Backseat.mp3"
+        - "res://tracks/Leotard.mp3"
+      mid_boss_chupar: "res://tracks/Olaf's Broke Car.mp3"
+      boss_bar: "res://tracks/Big Zeus.mp3" # Source file: tracks/Big Zeus.m4a (convert to .mp3)
+    stage_3_madrid:
+      street_waves:
+        - "res://tracks/Myst Water Blessings.mp3"
+        - "res://tracks/Loki and the Bottle of Mead.mp3"
+        - "res://tracks/Mead in the Rug.mp3"
+      mid_boss_dadur: "res://tracks/Stay Off Aphrodite's Bad Side.mp3"
+      boss_baphomet: "res://tracks/Lilith Reborn.mp3"
+    stage_4_moscow:
+      street_waves:
+        - "res://tracks/Iced Out.mp3"
+        - "res://tracks/I'm Not a Viking.mp3"
+        - "res://tracks/Thunder For Breakfast.mp3"
+      mid_boss_andruas: "res://tracks/Paranoid Pharaoh.mp3"
+      boss_beezelbub: "res://tracks/Exorcist.mp3"
+    stage_5_london:
+      street_waves:
+        - "res://tracks/Remember Your Name.mp3"
+        - "res://tracks/Peaches for the Pharaoh.mp3"
+      mid_boss_baba: "res://tracks/Peaches in the Pyramid.mp3"
+      boss_devil: "res://tracks/Azrael.mp3"
+    stage_6_tokyo:
+      street_waves:
+        - "res://tracks/Olympus Mainframe.mp3"
+        - "res://tracks/Ninja Pharaoh.mp3"
+        - "res://tracks/Into The Temple.mp3"
+      boss_satan: "res://tracks/God Mode.mp3"
+    stage_7_rome:
+      street_waves:
+        - "res://tracks/The Wrath of Osiris.mp3"
+        - "res://tracks/Three Thrones, One Flame.mp3"
+      boss_lucifer_phase_1: "res://tracks/Not Lucifer.mp3"
+      boss_lucifer_phase_2: "res://tracks/Armageddon.mp3"
+
+# ==============================================================================
+# BLENDER MCP CHARACTER & FIGHTING-GAME RIGGING PIPELINE
+# ==============================================================================
+BLENDER_MCP_RIGGING:
+  workflow_tool: "Blender MCP (execute_blender_code, look, get_scene_info)"
+  visual_target: >
+    Virtua Fighter / Indie Retro 3D low-poly arcade aesthetic: 800-2,000 triangles per
+    playable fighter (1,200-3,200 triangles for bosses), sharp faceted normals,
+    compact flat/vertex color palettes, exaggerated fighting proportions for unmistakable
+    side-profile readability.
+  skeleton_standard:
+    base_humanoid_bones: 24
+    hierarchy: >
+      root -> hips -> spine_01 -> spine_02 -> chest -> neck -> head;
+      clavicle.L/R -> upper_arm.L/R -> lower_arm.L/R -> hand.L/R -> weapon_socket.L/R;
+      thigh.L/R -> shin.L/R -> foot.L/R -> toe.L/R; plus back_socket on chest.
+    boss_rig_archetypes:
+      gnome_trickster_chadzug: "0.55x compact stature on 24-bone rig with oversized pointed cap/beard mesh for clear silhouette + weapon_socket.R pickaxe"
+      heavyweight_glutton_chupar: "1.35x wide sumo/brawler proportions (Virtua Fighter Taka-Arashi style) + belly_jiggle deform bone for elastic belly-deflect animations"
+      avian_raptors_beebo_bar: "Base rig + wing_shoulder.L/R -> wing_mid.L/R -> wing_tip.L/R, talon_foot.L/R, and articulated beak_jaw"
+      long_headed_bird_baba: "Tall lanky crane-stature rig + multi-segment neck_01 -> neck_02 -> elongated_cranium -> spear_beak_tip bone chain + crest_plume for half-screen whip-thrust pokes"
+      bovine_gods_dadur_baphomet: "1.35x-1.50x Minotaur/Bovine rigs with broad hunch spine_02, horn.L/R gore sockets, and digitigrade hock/hoof.L/R"
+      serpentine_naga_andruas: "Humanoid upper torso/arms fused to an 8-bone articulated snake coil chain (tail_01..tail_08) replacing legs + hood_flare.L/R & fang_jaw"
+      insectoid_swarm_beezelbub: "Base rig + rapid-flutter dorsal_wing_upper.L/R & dorsal_wing_lower.L/R + mandible.L/R"
+      infernal_triad_devil_satan_lucifer: "Whip-tail chain (tail_01..03) for Devil/Satan; 1.4x brute scale for Satan; 6-wing seraph rig (3 wing pairs on chest) for Lucifer"
+    ik_setup_in_blender: >
+      2-bone IK constraints on arms/legs (plus spline/damped-track chains on Andruas's
+      serpent tail and Baba's elongated neck/cranium) for crisp planted stances and
+      strike extension; baked to clean FK deform bones on GLB export (bake_anim_use_nla_strips=True).
+  fighting_game_animation_spec:
+    frame_rate: 60
+    interpolation: "Stepped / crisp linear-snap keyposes with explicit Startup, Active, and Recovery frame windows"
+    required_nla_actions:
+      shared_locomotion: ["idle_fight_stance", "walk_forward", "walk_back_guard", "run_dash", "jump_start", "jump_air_loop", "land", "block_high", "hit_light", "hit_launch_arc", "knockdown_getup"]
+      per_god_combat: ["light_1", "light_2", "light_3", "heavy_ground", "launcher_up", "air_combo_1", "air_combo_2", "air_dive_or_slam", "pantheon_special_1", "pantheon_special_2", "pantheon_super", "morph_entry_pose"]
+      per_boss_combat: ["boss_intro_taunt", "light_combo", "heavy_armor_breaker", "signature_special_1", "signature_special_2", "phase_2_roar", "ko_collapse"]
+  godot_integration:
+    export_format: >
+      GLTF 2.0 Binary (.glb) -> res://assets/characters/{endor,ir,osiris,horus}.glb and
+      res://assets/bosses/{chadzug,beebo,chupar,bar,dadur,baphomet,andruas,beezelbub,baba,devil,satan,lucifer}.glb
+    hitbox_binding: "Godot BoneAttachment3D nodes bound to hand.L/R, foot.L/R, weapon_socket.L/R, wing_tip.L/R, horn.L/R, spear_beak_tip, belly_jiggle, and tail_08 driving toggleable Area3D HitBoxes during Active frames"
+    visual_verification: "Capture side-profile (+Z/-Z camera) viewport renders in Blender via MCP `look` tool to verify silhouette clarity across size classes (0.55x Chadzug up to 1.5x Baphomet/Satan) before GLB export"
+# ==============================================================================
