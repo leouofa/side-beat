@@ -6,6 +6,7 @@ extends Node3D
 
 const CHUNK_LENGTH_M := 24.0
 const CHUNKS_COUNT := 7
+const BATTLE_ARENA_HALF_WIDTH := 7.0
 
 var generated_zones: Array[Dictionary] = []
 var total_stage_length_m: float = CHUNK_LENGTH_M * CHUNKS_COUNT
@@ -42,8 +43,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 				"sub_biome": biome_name,
 				"trigger_x": x_center - 2.5,
 				"center_x": x_center,
-				"min_x": x_start + 1.2,
-				"max_x": x_start + CHUNK_LENGTH_M - 1.2,
+				"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+				"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 				"budget": ["thug", "thug", "thug", "bruiser"],
 			})
 		elif idx == 2:
@@ -53,8 +54,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 				"sub_biome": biome_name,
 				"trigger_x": x_center - 2.5,
 				"center_x": x_center,
-				"min_x": x_start + 1.2,
-				"max_x": x_start + CHUNK_LENGTH_M - 1.2,
+				"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+				"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 				"budget": ["thug", "thug", "bruiser", "cult_elite", "thug"],
 			})
 		elif idx == 3:
@@ -65,8 +66,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 					"sub_biome": biome_name,
 					"trigger_x": x_center - 2.0,
 					"center_x": x_center,
-					"min_x": x_start + 1.5,
-					"max_x": x_start + CHUNK_LENGTH_M - 1.5,
+					"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+					"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 				})
 			else:
 				generated_zones.append({
@@ -75,8 +76,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 					"sub_biome": biome_name,
 					"trigger_x": x_center - 2.5,
 					"center_x": x_center,
-					"min_x": x_start + 1.2,
-					"max_x": x_start + CHUNK_LENGTH_M - 1.2,
+					"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+					"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 					"budget": ["bruiser", "cult_elite", "bruiser", "cult_elite"],
 				})
 		elif idx == 4:
@@ -86,8 +87,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 				"sub_biome": biome_name,
 				"trigger_x": x_center - 2.5,
 				"center_x": x_center,
-				"min_x": x_start + 1.2,
-				"max_x": x_start + CHUNK_LENGTH_M - 1.2,
+				"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+				"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 				"budget": ["thug", "bruiser", "cult_elite", "bruiser", "cult_elite"],
 			})
 		elif idx == 6:
@@ -97,8 +98,8 @@ func generate_city_stage(stage_num: int, seed_val: int = 0) -> Dictionary:
 				"sub_biome": biome_name,
 				"trigger_x": x_center - 2.0,
 				"center_x": x_center,
-				"min_x": x_start + 1.5,
-				"max_x": x_start + CHUNK_LENGTH_M - 1.5,
+				"min_x": x_center - BATTLE_ARENA_HALF_WIDTH,
+				"max_x": x_center + BATTLE_ARENA_HALF_WIDTH,
 			})
 
 	return {
