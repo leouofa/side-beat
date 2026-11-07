@@ -41,6 +41,7 @@ var _toast_ctx_label: Label
 var _toast_tween: Tween
 
 var _pause_panel: PanelContainer
+var _pause_crt_btn: Button
 var _pause_quit_btn: Button
 var _continue_panel: PanelContainer
 var _continue_timer_label: Label
@@ -349,8 +350,8 @@ func _build_modal_overlays(root: Control) -> void:
 	# Pause & Controls Card
 	_pause_panel = PanelContainer.new()
 	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
-	_pause_panel.position = Vector2(-270, -210)
-	_pause_panel.custom_minimum_size = Vector2(540, 420)
+	_pause_panel.position = Vector2(-270, -230)
+	_pause_panel.custom_minimum_size = Vector2(540, 460)
 	_pause_panel.visible = false
 	_pause_panel.add_theme_stylebox_override(
 		"panel",
@@ -389,6 +390,19 @@ func _build_modal_overlays(root: Control) -> void:
 	SynthwaveUI.apply_button_style(resume_btn)
 	resume_btn.pressed.connect(_toggle_pause)
 	pv.add_child(resume_btn)
+
+	_pause_crt_btn = Button.new()
+	var crt_lbl := PostFxManager.get_preset_label() if PostFxManager else "CRISP ARCADE"
+	_pause_crt_btn.text = "CRT SHADER: %s" % crt_lbl
+	SynthwaveUI.apply_button_style(_pause_crt_btn)
+	_pause_crt_btn.pressed.connect(func():
+		if PostFxManager:
+			PostFxManager.cycle_crt_preset()
+			_pause_crt_btn.text = "CRT SHADER: %s" % PostFxManager.get_preset_label()
+			if SfxManager:
+				SfxManager.play_2d("ui_confirm", 0.0, 0.0)
+	)
+	pv.add_child(_pause_crt_btn)
 
 	var restart_btn := Button.new()
 	restart_btn.text = "RESTART CITY STAGE"

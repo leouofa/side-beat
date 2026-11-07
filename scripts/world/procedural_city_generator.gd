@@ -7,6 +7,8 @@ extends Node3D
 const CHUNK_LENGTH_M := 24.0
 const CHUNKS_COUNT := 7
 const BATTLE_ARENA_HALF_WIDTH := 7.0
+const WET_ASPHALT_SHADER := preload("res://shaders/wet_neon_asphalt.gdshader")
+const SKYLINE_CYBER_SHADER := preload("res://shaders/skyline_cyber_rim.gdshader")
 
 var generated_zones: Array[Dictionary] = []
 var total_stage_length_m: float = CHUNK_LENGTH_M * CHUNKS_COUNT
@@ -163,14 +165,18 @@ func _build_chunk_geometry(chunk_idx: int, x_start: float, cfg: Dictionary, biom
 	chunk_root.position = Vector3(x_start, 0.0, 0.0)
 	add_child(chunk_root)
 
-	# Asphalt belt road [-3.3, +3.3]
+	# Asphalt belt road [-3.3, +3.3] with Wet Neon Street Asphalt Shader
 	var road := MeshInstance3D.new()
+	road.name = "RoadMesh"
 	var rbox := BoxMesh.new()
 	rbox.size = Vector3(CHUNK_LENGTH_M, 0.16, 6.8)
 	road.mesh = rbox
-	var rmat := StandardMaterial3D.new()
-	rmat.albedo_color = (cfg["asphalt"] as Color).lightened(0.04 * float(biome_idx))
-	rmat.roughness = 0.85
+	var rmat := ShaderMaterial.new()
+	rmat.shader = WET_ASPHALT_SHADER
+	rmat.set_shader_parameter("asphalt_color", (cfg["asphalt"] as Color).lightened(0.04 * float(biome_idx)))
+	rmat.set_shader_parameter("neon_a", cfg["neon_a"])
+	rmat.set_shader_parameter("neon_b", cfg["neon_b"])
+	rmat.set_shader_parameter("puddle_coverage", 0.52)
 	road.material_override = rmat
 	road.position = Vector3(CHUNK_LENGTH_M * 0.5, -0.08, 0.0)
 	chunk_root.add_child(road)
@@ -282,15 +288,20 @@ func _build_chunk_geometry(chunk_idx: int, x_start: float, cfg: Dictionary, biom
 			door.position = Vector3(bx, 1.35, -5.85)
 			chunk_root.add_child(door)
 
-	# Distant Low-Poly Skyline Towers for urban depth
+	# Distant Low-Poly Skyline Towers with Cyber-Grid Rim Shader for urban depth
 	for sk_i in range(2):
 		var tower := MeshInstance3D.new()
+		tower.name = "SkylineTower_%d" % sk_i
 		var tbox := BoxMesh.new()
 		var th := rng.randf_range(18.0, 32.0)
 		tbox.size = Vector3(9.0, th, 6.0)
 		tower.mesh = tbox
-		var tmat := StandardMaterial3D.new()
-		tmat.albedo_color = (cfg["sky_top"] as Color).lightened(0.10)
+		var tmat := ShaderMaterial.new()
+		tmat.shader = SKYLINE_CYBER_SHADER
+		tmat.set_shader_parameter("tower_base_color", (cfg["sky_top"] as Color).lightened(0.10))
+		tmat.set_shader_parameter("horizon_fog_color", cfg["sky_horizon"])
+		tmat.set_shader_parameter("neon_rim_color", cfg["neon_a"] if sk_i == 0 else cfg["neon_b"])
+		tmat.set_shader_parameter("neon_accent_color", cfg["neon_b"] if sk_i == 0 else cfg["neon_a"])
 		tower.material_override = tmat
 		tower.position = Vector3(6.0 + float(sk_i) * 12.0, th * 0.45 - 3.0, -19.5 - float(sk_i) * 3.0)
 		chunk_root.add_child(tower)

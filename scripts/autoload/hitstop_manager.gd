@@ -1,8 +1,12 @@
 extends Node
 ## Frame-accurate arcade Hitstop (3-7 frames @ 60Hz), slow-mo (Perfect Parry / Boss KO),
-## camera trauma shake, and crisp low-poly 3D hit-sparks, morph bursts, and telegraph decals.
+## camera trauma shake, and shader-driven 3D hit-sparks, slash arcs, shockwaves, plasma pillars, and animated telegraphs.
 
 signal camera_shake_requested(trauma: float)
+
+const HIT_SLASH_SHADER := preload("res://shaders/combat_hit_slash.gdshader")
+const SHOCKWAVE_SHADER := preload("res://shaders/energy_shockwave.gdshader")
+const TELEGRAPH_SHADER := preload("res://shaders/danger_telegraph.gdshader")
 
 var _hitstop_timer: float = 0.0
 var _slowmo_timer: float = 0.0
@@ -58,13 +62,21 @@ func _ensure_vfx_parent() -> Node:
 	return get_tree().current_scene
 
 
-func _make_emissive_mat(color: Color, alpha: float = 1.0) -> StandardMaterial3D:
-	var mat := StandardMaterial3D.new()
-	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
-	mat.albedo_color = Color(color.r, color.g, color.b, alpha)
-	if alpha < 0.999:
-		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
+func _make_hit_slash_mat(color: Color, is_slash_ring: bool = false) -> ShaderMaterial:
+	var mat := ShaderMaterial.new()
+	mat.shader = HIT_SLASH_SHADER
+	mat.set_shader_parameter("strike_color", color)
+	mat.set_shader_parameter("progress", 0.0)
+	mat.set_shader_parameter("is_slash_ring", 1.0 if is_slash_ring else 0.0)
+	return mat
+
+
+func _make_shockwave_mat(color: Color, is_pillar: bool = false) -> ShaderMaterial:
+	var mat := ShaderMaterial.new()
+	mat.shader = SHOCKWAVE_SHADER
+	mat.set_shader_parameter("energy_color", color)
+	mat.set_shader_parameter("progress", 0.0)
+	mat.set_shader_parameter("is_pillar", 1.0 if is_pillar else 0.0)
 	return mat
 
 
@@ -76,19 +88,36 @@ func spawn_hit_spark(world_pos: Vector3, color: Color = Color("#FFE066"), scale_
 	parent.add_child(holder)
 	holder.global_position = world_pos
 
-	var mat := _make_emissive_mat(color, 0.95)
-	for i in range(5):
+	var shard_mat := _make_hit_slash_mat(color, false)
+	for i in range(6):
 		var shard := MeshInstance3D.new()
 		var prism := PrismMesh.new()
-		prism.size = Vector3(0.11, 0.48, 0.08) * scale_mult
+		prism.size = Vector3(0.12, 0.54, 0.08) * scale_mult
 		shard.mesh = prism
-		shard.material_override = mat
-		shard.rotation = Vector3(randf_range(-1.2, 1.2), randf_range(0.0, TAU), float(i) * TAU / 5.0)
+		shard.material_override = shard_mat
+		shard.rotation = Vector3(randf_range(-1.2, 1.2), randf_range(0.0, TAU), float(i) * TAU / 6.0)
 		holder.add_child(shard)
 
+	# Directional crescent slash arc quad
+	var slash_quad := MeshInstance3D.new()
+	var qmesh := QuadMesh.new()
+	qmesh.size = Vector2(1.45, 1.45) * scale_mult
+	slash_quad.mesh = qmesh
+	var slash_mat := _make_hit_slash_mat(color, true)
+	slash_quad.material_override = slash_mat
+	slash_quad.rotation = Vector3(randf_range(-0.4, 0.4), randf_range(-0.35, 0.35), randf_range(0.0, TAU))
+	holder.add_child(slash_quad)
+
 	var tw := holder.create_tween().set_parallel(true)
-	tw.tween_property(holder, "scale", Vector3.ONE * (1.85 * scale_mult), 0.14).from(Vector3.ONE * 0.35)
-	tw.tween_property(mat, "albedo_color:a", 0.0, 0.14)
+	tw.tween_property(holder, "scale", Vector3.ONE * (1.95 * scale_mult), 0.15).from(Vector3.ONE * 0.35)
+	tw.tween_method(
+		func(p: float) -> void:
+			shard_mat.set_shader_parameter("progress", p)
+			slash_mat.set_shader_parameter("progress", p),
+		0.0,
+		1.0,
+		0.15
+	)
 	tw.chain().tween_callback(holder.queue_free)
 
 
@@ -99,30 +128,36 @@ func spawn_morph_flash(world_pos: Vector3, pantheon_color: Color) -> void:
 	var ring := MeshInstance3D.new()
 	var torus := TorusMesh.new()
 	torus.inner_radius = 0.55
-	torus.outer_radius = 0.78
-	torus.rings = 10
-	torus.ring_segments = 6
+	torus.outer_radius = 0.82
+	torus.rings = 12
+	torus.ring_segments = 8
 	ring.mesh = torus
-	var mat := _make_emissive_mat(pantheon_color, 0.92)
+	var mat := _make_shockwave_mat(pantheon_color, false)
 	ring.material_override = mat
 	parent.add_child(ring)
 	ring.global_position = world_pos + Vector3(0.0, 0.95, 0.0)
 
 	var pillar := MeshInstance3D.new()
 	var cyl := CylinderMesh.new()
-	cyl.top_radius = 0.35
-	cyl.bottom_radius = 0.55
-	cyl.height = 2.2
-	cyl.radial_segments = 8
+	cyl.top_radius = 0.38
+	cyl.bottom_radius = 0.58
+	cyl.height = 2.3
+	cyl.radial_segments = 10
 	pillar.mesh = cyl
-	var pmat := _make_emissive_mat(pantheon_color.lightened(0.25), 0.55)
+	var pmat := _make_shockwave_mat(pantheon_color.lightened(0.25), true)
 	pillar.material_override = pmat
 	ring.add_child(pillar)
 
 	var tw := ring.create_tween().set_parallel(true)
-	tw.tween_property(ring, "scale", Vector3(2.1, 1.35, 2.1), 0.20).from(Vector3(0.45, 0.6, 0.45))
-	tw.tween_property(mat, "albedo_color:a", 0.0, 0.20)
-	tw.tween_property(pmat, "albedo_color:a", 0.0, 0.18)
+	tw.tween_property(ring, "scale", Vector3(2.2, 1.4, 2.2), 0.22).from(Vector3(0.45, 0.6, 0.45))
+	tw.tween_method(
+		func(p: float) -> void:
+			mat.set_shader_parameter("progress", p)
+			pmat.set_shader_parameter("progress", p),
+		0.0,
+		1.0,
+		0.22
+	)
 	tw.chain().tween_callback(ring.queue_free)
 
 
@@ -134,16 +169,22 @@ func spawn_shockwave_ring(world_pos: Vector3, color: Color, radius: float = 2.8,
 	var cyl := CylinderMesh.new()
 	cyl.top_radius = 1.0
 	cyl.bottom_radius = 1.0
-	cyl.height = 0.12
-	cyl.radial_segments = 12
+	cyl.height = 0.14
+	cyl.radial_segments = 16
 	mesh_inst.mesh = cyl
-	var mat := _make_emissive_mat(color, 0.78)
+	var mat := _make_shockwave_mat(color, false)
 	mesh_inst.material_override = mat
 	parent.add_child(mesh_inst)
 	mesh_inst.global_position = Vector3(world_pos.x, 0.08, world_pos.z)
 	var tw := mesh_inst.create_tween().set_parallel(true)
 	tw.tween_property(mesh_inst, "scale", Vector3(radius, 1.0, radius), duration).from(Vector3(0.25, 1.0, 0.25))
-	tw.tween_property(mat, "albedo_color:a", 0.0, duration)
+	tw.tween_method(
+		func(p: float) -> void:
+			mat.set_shader_parameter("progress", p),
+		0.0,
+		1.0,
+		duration
+	)
 	tw.chain().tween_callback(mesh_inst.queue_free)
 
 
@@ -156,16 +197,22 @@ func spawn_lightning_pillar(world_pos: Vector3, color: Color = Color("#00D4FF"),
 	cyl.top_radius = width * 0.55
 	cyl.bottom_radius = width
 	cyl.height = height
-	cyl.radial_segments = 6
+	cyl.radial_segments = 10
 	bolt.mesh = cyl
-	var mat := _make_emissive_mat(color, 0.92)
+	var mat := _make_shockwave_mat(color, true)
 	bolt.material_override = mat
 	parent.add_child(bolt)
 	bolt.global_position = Vector3(world_pos.x, height * 0.5, world_pos.z)
 	spawn_shockwave_ring(world_pos, color, width * 3.4, 0.30)
 	var tw := bolt.create_tween().set_parallel(true)
-	tw.tween_property(bolt, "scale", Vector3(0.15, 1.0, 0.15), 0.28).from(Vector3(1.3, 1.0, 1.3))
-	tw.tween_property(mat, "albedo_color:a", 0.0, 0.28)
+	tw.tween_property(bolt, "scale", Vector3(0.18, 1.0, 0.18), 0.28).from(Vector3(1.35, 1.0, 1.35))
+	tw.tween_method(
+		func(p: float) -> void:
+			mat.set_shader_parameter("progress", p),
+		0.0,
+		1.0,
+		0.28
+	)
 	tw.chain().tween_callback(bolt.queue_free)
 
 
@@ -177,12 +224,28 @@ func spawn_ground_telegraph(world_pos: Vector3, size_xz: Vector2, warning_durati
 	var box := BoxMesh.new()
 	box.size = Vector3(size_xz.x, 0.04, size_xz.y)
 	quad.mesh = box
-	var mat := _make_emissive_mat(Color("#FF1E42"), 0.46)
+	var mat := ShaderMaterial.new()
+	mat.shader = TELEGRAPH_SHADER
+	mat.set_shader_parameter("warning_color", Color("#FF1E42"))
+	mat.set_shader_parameter("fill_progress", 0.0)
+	mat.set_shader_parameter("opacity_scale", 0.90)
 	quad.material_override = mat
 	parent.add_child(quad)
 	quad.global_position = Vector3(world_pos.x, 0.03, clampf(world_pos.z, -3.1, 3.1))
 	var tw := quad.create_tween()
-	tw.tween_property(mat, "albedo_color:a", 0.78, warning_duration * 0.7)
-	tw.tween_property(mat, "albedo_color:a", 0.0, warning_duration * 0.3)
+	tw.tween_method(
+		func(p: float) -> void:
+			mat.set_shader_parameter("fill_progress", p),
+		0.0,
+		1.0,
+		warning_duration * 0.78
+	)
+	tw.tween_method(
+		func(op: float) -> void:
+			mat.set_shader_parameter("opacity_scale", op),
+		0.95,
+		0.0,
+		warning_duration * 0.22
+	)
 	tw.tween_callback(quad.queue_free)
 	return quad

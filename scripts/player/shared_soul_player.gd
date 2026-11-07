@@ -16,6 +16,7 @@ const CORRIDOR_Z_MIN := -3.2
 const CORRIDOR_Z_MAX := 3.2
 const GRAVITY := 28.0
 const PERFECT_PARRY_WINDOW_FRAMES := 8
+const FighterShaderHelper := preload("res://scripts/utils/fighter_shader_helper.gd")
 
 const SOCKET_BONES := [
 	"hand.L",
@@ -107,6 +108,7 @@ func _preload_all_4_god_rigs() -> void:
 
 		var skel := GlbLoader.find_skeleton(rig_root)
 		var anim := GlbLoader.find_anim_player(rig_root)
+		var fx_mat := FighterShaderHelper.attach_surface_fx(rig_root, prof.primary_color, 0.92, 0.0)
 		var sockets: Dictionary = {}
 
 		if skel:
@@ -128,6 +130,7 @@ func _preload_all_4_god_rigs() -> void:
 			"skeleton": skel,
 			"anim": anim,
 			"sockets": sockets,
+			"fx_mat": fx_mat,
 		})
 
 
@@ -191,6 +194,10 @@ func morph_to_slot(target_slot: int) -> bool:
 	_update_facing_visual()
 
 	var prof := active_god()
+	var fx_mat: ShaderMaterial = _god_rigs[active_slot].get("fx_mat", null)
+	FighterShaderHelper.trigger_hit_flash(self, fx_mat, prof.primary_color, 0.12)
+	if PostFxManager:
+		PostFxManager.trigger_morph_glitch(prof.primary_color, 0.58, 0.18)
 	if HitstopManager:
 		HitstopManager.spawn_morph_flash(global_position, prof.primary_color)
 	if SfxManager:
@@ -372,6 +379,10 @@ func start_attack(move_key: StringName) -> bool:
 	# Specials & Supers emit dramatic feedback
 	if move.meter_cost >= 100.0:
 		invuln_timer = maxf(invuln_timer, 0.75)
+		var fx_mat: ShaderMaterial = _god_rigs[active_slot].get("fx_mat", null)
+		FighterShaderHelper.trigger_hit_flash(self, fx_mat, Color("#FFFFFF"), 0.22)
+		if PostFxManager:
+			PostFxManager.trigger_parry_or_super_impact(global_position + Vector3(0.0, 1.0, 0.0), prof.primary_color, true)
 		if SfxManager:
 			SfxManager.play_2d("super_flash", 0.0, 0.0)
 		if HitstopManager:
@@ -543,6 +554,10 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 	if in_counter_stance or in_perfect_parry:
 		invuln_timer = 0.45
 		add_pantheon_meter(20.0)
+		var p_fx_mat: ShaderMaterial = _god_rigs[active_slot].get("fx_mat", null)
+		FighterShaderHelper.trigger_hit_flash(self, p_fx_mat, Color("#FFE066"), 0.16)
+		if PostFxManager:
+			PostFxManager.trigger_parry_or_super_impact(global_position + Vector3(0.0, 1.1, 0.0), Color("#FFE066"), false)
 		if SfxManager:
 			SfxManager.play_2d("parry_clang", 1.5, 0.02)
 		if HitstopManager:
@@ -573,6 +588,8 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 
 	if SfxManager:
 		SfxManager.play_3d("hit_heavy", global_position, 0.0, 0.06)
+	var hit_fx_mat: ShaderMaterial = _god_rigs[active_slot].get("fx_mat", null)
+	FighterShaderHelper.trigger_hit_flash(self, hit_fx_mat, Color("#FF1E42"), 0.13)
 	if HitstopManager:
 		HitstopManager.trigger_hitstop(4, 0.30)
 		HitstopManager.spawn_hit_spark(global_position + Vector3(0.0, 1.0, 0.0), Color("#FF1E42"), 1.2)

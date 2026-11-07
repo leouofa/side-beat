@@ -27,6 +27,7 @@ SoundtrackManager="*res://scripts/autoload/soundtrack_manager.gd"
 SfxManager="*res://scripts/autoload/sfx_manager.gd"
 HitstopManager="*res://scripts/autoload/hitstop_manager.gd"
 GameManager="*res://scripts/autoload/game_manager.gd"
+PostFxManager="*res://scripts/autoload/post_fx_manager.gd"
 
 [display]
 

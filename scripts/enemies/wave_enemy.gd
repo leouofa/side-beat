@@ -8,6 +8,7 @@ signal defeated(enemy: WaveEnemy, score_value: int, world_pos: Vector3)
 const CORRIDOR_Z_MIN := -3.2
 const CORRIDOR_Z_MAX := 3.2
 const GRAVITY := 26.0
+const FighterShaderHelper := preload("res://scripts/utils/fighter_shader_helper.gd")
 
 const TIER_CONFIGS := {
 	"thug": {
@@ -82,6 +83,8 @@ var _hurtbox: HurtBox3D
 var _hitbox: HitBox3D
 var _hp_bar_fill: MeshInstance3D
 var _hp_bar_root: Node3D
+var _fx_mat: ShaderMaterial = null
+var _dissolve_mat: ShaderMaterial = null
 
 var _hitstun_timer: float = 0.0
 var _attack_cooldown: float = 0.8
@@ -165,6 +168,8 @@ func configure_tier(new_tier: String, city_tint: Color = Color.WHITE) -> void:
 	var pants_c: Color = cfg["pants_color"]
 	var accent_c: Color = cfg["accent_color"]
 	_apply_palette_override(jacket_c, pants_c, accent_c)
+	var armor_r := 1.0 if max_poise > 0.0 else 0.0
+	_fx_mat = FighterShaderHelper.attach_surface_fx(_rig_root, accent_c, 0.65, armor_r)
 
 
 func _apply_palette_override(jacket_c: Color, pants_c: Color, accent_c: Color) -> void:
@@ -411,6 +416,9 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 	hp = maxf(0.0, hp - dmg)
 	poise = maxf(0.0, poise - armor_dmg)
 	_update_hp_bar()
+	var flash_col: Color = payload.get("spark_color", Color("#FFE066"))
+	FighterShaderHelper.trigger_hit_flash(self, _fx_mat, flash_col.lightened(0.35), 0.11)
+	FighterShaderHelper.update_armor_and_enrage(_fx_mat, poise, max_poise, false)
 
 	if hp <= 0.0:
 		_die(dir_sign)
@@ -471,6 +479,8 @@ func _die(dir_sign: float) -> void:
 		_hurtbox.deactivate()
 	velocity = Vector3(dir_sign * 5.8, 4.2, 0.0)
 	_play_anim(&"ko_collapse", 1.1)
+	var accent_c: Color = TIER_CONFIGS.get(tier_id, TIER_CONFIGS["thug"])["accent_color"]
+	_dissolve_mat = FighterShaderHelper.trigger_ko_dissolve(self, _rig_root, accent_c, 0.65)
 	if SfxManager:
 		SfxManager.play_3d("ko_boom", global_position, -2.5, 0.08)
 	if GameManager:
