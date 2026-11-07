@@ -23,6 +23,7 @@ func _ready() -> void:
 	_test_resonance_math()
 	await _test_stage_1_runtime_and_morph_preservation()
 	_test_stages_2_to_4_generation()
+	_test_hitstop_manager_camera_shake()
 	_test_save_persistence()
 
 	print("==============================================")
@@ -254,6 +255,26 @@ func _test_stages_2_to_4_generation() -> void:
 	_assert(String(CityStageCatalog.STAGES[4]["hazard"]) == "ice_slick", "Stage 4 features ice_slick hazard")
 
 	gen.free()
+
+
+func _test_hitstop_manager_camera_shake() -> void:
+	_assert(HitstopManager != null, "HitstopManager autoload is active")
+	_assert(HitstopManager.has_method("trigger_camera_shake"), "HitstopManager implements trigger_camera_shake")
+
+	var received := [-1.0]
+	var handler := func(trauma: float) -> void:
+		received[0] = trauma
+
+	HitstopManager.camera_shake_requested.connect(handler)
+	# Test 2-arg signature used by BossController slams (e.g. Chupar cannonball sit drop)
+	HitstopManager.trigger_camera_shake(0.42, 11.0)
+	_assert(is_equal_approx(received[0], 0.42), "trigger_camera_shake(0.42, 11.0) emits camera_shake_requested(0.42)")
+
+	# Test 1-arg signature
+	HitstopManager.trigger_camera_shake(0.35)
+	_assert(is_equal_approx(received[0], 0.35), "trigger_camera_shake(0.35) emits camera_shake_requested(0.35)")
+
+	HitstopManager.camera_shake_requested.disconnect(handler)
 
 
 func _test_save_persistence() -> void:

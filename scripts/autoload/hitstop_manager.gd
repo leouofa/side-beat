@@ -28,6 +28,11 @@ func trigger_hitstop(frames_60hz: int, shake_trauma: float = 0.22) -> void:
 		camera_shake_requested.emit(shake_trauma)
 
 
+func trigger_camera_shake(trauma: float = 0.35, _intensity: float = 0.0) -> void:
+	if trauma > 0.0:
+		camera_shake_requested.emit(trauma)
+
+
 func trigger_slow_mo(scale: float = 0.28, real_seconds: float = 0.35, duck_music: bool = false) -> void:
 	Engine.time_scale = clampf(scale, 0.08, 1.0)
 	_slowmo_timer = maxf(_slowmo_timer, real_seconds)
