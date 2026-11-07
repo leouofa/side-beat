@@ -8,7 +8,6 @@ signal defeated(enemy: WaveEnemy, score_value: int, world_pos: Vector3)
 const CORRIDOR_Z_MIN := -3.2
 const CORRIDOR_Z_MAX := 3.2
 const GRAVITY := 26.0
-const FighterShaderHelper := preload("res://scripts/utils/fighter_shader_helper.gd")
 
 const TIER_CONFIGS := {
 	"thug": {
@@ -505,3 +504,7 @@ func _clamp_corridor() -> void:
 	global_position.z = clampf(global_position.z, CORRIDOR_Z_MIN, CORRIDOR_Z_MAX)
 	if has_entered_arena:
 		global_position.x = clampf(global_position.x, arena_x_min, arena_x_max)
+
+
+func _exit_tree() -> void:
+	FighterShaderHelper.clear_surface_fx(_rig_root)

@@ -826,6 +826,8 @@ func _test_shader_effects_and_post_fx() -> void:
 	add_child(ply)
 	var god_rigs: Array = ply.get("_god_rigs")
 	_assert(god_rigs.size() == 4 and god_rigs[0].get("fx_mat") is ShaderMaterial, "SharedSoulPlayer attaches fighter_surface_fx ShaderMaterial to all 4 God rigs")
+	var p_meshes := ply.find_children("*", "MeshInstance3D", true, false)
+	_assert(p_meshes.size() > 0 and (p_meshes[0] as MeshInstance3D).material_overlay is ShaderMaterial, "Player mesh instances have material_overlay attached")
 	ply.free()
 
 	var enemy := WaveEnemy.new()
@@ -860,7 +862,7 @@ func _test_shader_effects_and_post_fx() -> void:
 	HitstopManager.spawn_lightning_pillar(Vector3.ZERO, Color("#00D4FF"), 5.0, 0.5)
 	var tele := HitstopManager.spawn_ground_telegraph(Vector3.ZERO, Vector2(2.0, 2.0), 0.35)
 	_assert(tele != null and tele.material_override is ShaderMaterial, "HitstopManager ground telegraph uses danger_telegraph ShaderMaterial")
-	vfx_holder.free()
+	vfx_holder.queue_free()
 
 	var gen := ProceduralCityGenerator.new()
 	add_child(gen)
@@ -870,7 +872,7 @@ func _test_shader_effects_and_post_fx() -> void:
 	var tower_mesh := chunk0.get_node_or_null("SkylineTower_0") as MeshInstance3D if chunk0 else null
 	_assert(road_mesh != null and road_mesh.material_override is ShaderMaterial, "ProceduralCityGenerator road uses wet_neon_asphalt ShaderMaterial")
 	_assert(tower_mesh != null and tower_mesh.material_override is ShaderMaterial, "ProceduralCityGenerator skyline tower uses skyline_cyber_rim ShaderMaterial")
-	gen.free()
+	gen.queue_free()
 	await get_tree().process_frame
 	await get_tree().process_frame
 

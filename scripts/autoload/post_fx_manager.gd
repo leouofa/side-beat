@@ -48,7 +48,7 @@ func _ready() -> void:
 	_overlay_rect.material = _shader_mat
 	add_child(_overlay_rect)
 
-	var saved_preset := CrtPreset.CRISP_ARCADE
+	var saved_preset: int = CrtPreset.CRISP_ARCADE
 	if SaveManager and SaveManager.data.has("crt_preset"):
 		saved_preset = clampi(int(SaveManager.data["crt_preset"]), 0, 2)
 	set_crt_preset(saved_preset, false)

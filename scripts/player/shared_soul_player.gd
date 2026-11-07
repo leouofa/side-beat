@@ -16,7 +16,6 @@ const CORRIDOR_Z_MIN := -3.2
 const CORRIDOR_Z_MAX := 3.2
 const GRAVITY := 28.0
 const PERFECT_PARRY_WINDOW_FRAMES := 8
-const FighterShaderHelper := preload("res://scripts/utils/fighter_shader_helper.gd")
 
 const SOCKET_BONES := [
 	"hand.L",
