@@ -19,8 +19,10 @@ func _ready() -> void:
 	print("=== SIDE BEAT AUTOMATED VERIFICATION SUITE ===")
 	_test_37_soundtracks_and_sfx()
 	_test_glb_rigs_and_nla_clips()
+	_test_m2_bosses_and_drone()
 	_test_resonance_math()
 	await _test_stage_1_runtime_and_morph_preservation()
+	_test_stages_2_to_4_generation()
 	_test_save_persistence()
 
 	print("==============================================")
@@ -107,6 +109,50 @@ func _test_glb_rigs_and_nla_clips() -> void:
 	chad.free()
 
 
+func _test_m2_bosses_and_drone() -> void:
+	# Chupar
+	var chupar := GlbLoader.instantiate_glb("res://assets/bosses/chupar.glb")
+	var ch_skel := GlbLoader.find_skeleton(chupar)
+	_assert(ch_skel != null and ch_skel.find_bone("belly_jiggle") >= 0, "Chupar GLB has belly_jiggle bone")
+	chupar.free()
+
+	# Bar
+	var bar := GlbLoader.instantiate_glb("res://assets/bosses/bar.glb")
+	var bar_skel := GlbLoader.find_skeleton(bar)
+	_assert(bar_skel != null and bar_skel.find_bone("wing_tip.L") >= 0 and bar_skel.find_bone("talon_foot.R") >= 0, "Bar GLB has avian wing_tip.L and talon_foot.R bones")
+	bar.free()
+
+	# Dadur
+	var dadur := GlbLoader.instantiate_glb("res://assets/bosses/dadur.glb")
+	var d_skel := GlbLoader.find_skeleton(dadur)
+	_assert(d_skel != null and d_skel.find_bone("horn.L") >= 0 and d_skel.find_bone("horn.R") >= 0, "Dadur GLB has bovine horn.L and horn.R bones")
+	dadur.free()
+
+	# Baphomet
+	var baph := GlbLoader.instantiate_glb("res://assets/bosses/baphomet.glb")
+	var baph_skel := GlbLoader.find_skeleton(baph)
+	_assert(baph_skel != null and baph_skel.find_bone("horn.L") >= 0 and baph_skel.find_bone("horn.R") >= 0 and baph_skel.find_bone("foot.L") >= 0, "Baphomet GLB has demon horn.L/R and humanoid foot.L bones")
+	baph.free()
+
+	# Andruas
+	var andruas := GlbLoader.instantiate_glb("res://assets/bosses/andruas.glb")
+	var a_skel := GlbLoader.find_skeleton(andruas)
+	_assert(a_skel != null and a_skel.find_bone("tail_01") >= 0 and a_skel.find_bone("tail_08") >= 0, "Andruas GLB has 8-segment serpentine tail bones")
+	andruas.free()
+
+	# Beezelbub
+	var beezel := GlbLoader.instantiate_glb("res://assets/bosses/beezelbub.glb")
+	var bz_skel := GlbLoader.find_skeleton(beezel)
+	_assert(bz_skel != null and bz_skel.find_bone("dorsal_wing_upper.L") >= 0 and bz_skel.find_bone("mandible.L") >= 0, "Beezelbub GLB has dorsal_wing_upper.L and mandible.L bones")
+	beezel.free()
+
+	# Drone Fly
+	var drone := GlbLoader.instantiate_glb("res://assets/enemies/drone_fly.glb")
+	var dr_skel := GlbLoader.find_skeleton(drone)
+	_assert(dr_skel != null and dr_skel.find_bone("wing.L") >= 0 and dr_skel.find_bone("wing.R") >= 0, "Drone Fly minion GLB has wing.L and wing.R bones")
+	drone.free()
+
+
 func _test_resonance_math() -> void:
 	var rt := ResonanceTracker.new()
 	var r1 := rt.register_hit("endor")
@@ -177,6 +223,37 @@ func _test_stage_1_runtime_and_morph_preservation() -> void:
 
 	runner.queue_free()
 	await get_tree().process_frame
+
+
+func _test_stages_2_to_4_generation() -> void:
+	_assert(GameManager.max_implemented_stage == 4, "GameManager.max_implemented_stage is 4 for Milestone 2")
+
+	var gen := ProceduralCityGenerator.new()
+	add_child(gen)
+
+	# Stage 2: Los Angeles (Chupar mid-boss, Bar stage-boss)
+	var st2 := gen.generate_city_stage(2, 2001)
+	_assert(gen.generated_zones.size() == 5, "Stage 2 (LA) generated 5 encounter zones")
+	_assert(String(st2.get("city", "")) == "Los Angeles", "Stage 2 city is Los Angeles")
+	_assert(String(gen.generated_zones[2].get("boss_id", "")) == "chupar", "Stage 2 has mid-boss Chupar")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "bar", "Stage 2 has stage-boss Bar")
+
+	# Stage 3: Madrid (Dadur mid-boss, Baphomet stage-boss)
+	var st3 := gen.generate_city_stage(3, 3001)
+	_assert(gen.generated_zones.size() == 5, "Stage 3 (Madrid) generated 5 encounter zones")
+	_assert(String(st3.get("city", "")) == "Madrid", "Stage 3 city is Madrid")
+	_assert(String(gen.generated_zones[2].get("boss_id", "")) == "dadur", "Stage 3 has mid-boss Dadur")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "baphomet", "Stage 3 has stage-boss Baphomet")
+
+	# Stage 4: Moscow (Andruas mid-boss, Beezelbub stage-boss, ice_slick hazard)
+	var st4 := gen.generate_city_stage(4, 4001)
+	_assert(gen.generated_zones.size() == 5, "Stage 4 (Moscow) generated 5 encounter zones")
+	_assert(String(st4.get("city", "")) == "Moscow", "Stage 4 city is Moscow")
+	_assert(String(gen.generated_zones[2].get("boss_id", "")) == "andruas", "Stage 4 has mid-boss Andruas")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "beezelbub", "Stage 4 has stage-boss Beezelbub")
+	_assert(String(CityStageCatalog.STAGES[4]["hazard"]) == "ice_slick", "Stage 4 features ice_slick hazard")
+
+	gen.free()
 
 
 func _test_save_persistence() -> void:

@@ -226,6 +226,18 @@ func _choose_next_boss_attack(player: Node3D) -> void:
 		_setup_chadzug_pattern(player)
 	elif boss_id == "beebo":
 		_setup_beebo_pattern(player)
+	elif boss_id == "chupar":
+		_setup_chupar_pattern(player)
+	elif boss_id == "bar":
+		_setup_bar_pattern(player)
+	elif boss_id == "dadur":
+		_setup_dadur_pattern(player)
+	elif boss_id == "baphomet":
+		_setup_baphomet_pattern(player)
+	elif boss_id == "andruas":
+		_setup_andruas_pattern(player)
+	elif boss_id == "beezelbub":
+		_setup_beezelbub_pattern(player)
 	else:
 		_setup_generic_mythic_pattern(player)
 
@@ -322,6 +334,242 @@ func _setup_generic_mythic_pattern(_player: Node3D) -> void:
 		HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 1.6, 0.0, 0.0), Vector2(3.2, 2.4), 0.40)
 
 
+func _setup_chupar_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Hundred-Palm Buffet Rush
+			_current_move.move_id = &"hundred_palm_rush"
+			_current_move.damage = 65.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(3.2, 1.8, 2.2)
+			_play_anim(&"signature_special_1", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.2, 0.0, 0.0), Vector2(4.5, 2.0), 0.32)
+		1:
+			# Belly-Elastic Strike & Projectile Bounce
+			_current_move.move_id = &"belly_bounce"
+			_current_move.damage = 76.0
+			_current_move.hyper_armor = true
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.5)
+			_play_anim(&"heavy_armor_breaker", 1.1)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 1.5, 0.0, 0.0), Vector2(3.0, 2.4), 0.38)
+		2:
+			# Tremor Cannonball Sit-Drop
+			_current_move.move_id = &"cannonball_sit_drop"
+			_current_move.damage = 88.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 7
+			_current_move.aoe_corridor_box = Vector3(5.2, 2.0, 5.0)
+			velocity = Vector3(facing_sign * 3.5, 11.5, 0.0)
+			_play_anim(&"signature_special_2", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.0, 0.0, 0.0), Vector2(5.5, 5.0), 0.45)
+		_:
+			_current_move.move_id = &"heavy_strike"
+			_current_move.damage = 60.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(2.6, 1.8, 2.0)
+			_play_anim(&"light_combo", 1.1)
+
+
+func _setup_bar_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Supersonic Screech Wave
+			_current_move.move_id = &"screech_wave"
+			_current_move.damage = 68.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(7.5, 2.6, 5.5)
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.8, 0.0, 0.0), Vector2(7.5, 5.5), 0.35)
+		1:
+			# Cross-Boulevard Cyclone Glide
+			_current_move.move_id = &"cyclone_glide"
+			_current_move.damage = 72.0
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(3.5, 2.2, 2.4)
+			velocity = Vector3(facing_sign * 14.5, 0.0, 0.0)
+			_play_anim(&"signature_special_2", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 5.0, 0.0, 0.0), Vector2(10.0, 2.2), 0.30)
+		2:
+			# Sky-Drop Talon Piledriver
+			_current_move.move_id = &"talon_piledriver"
+			_current_move.damage = 85.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 7
+			_current_move.aoe_corridor_box = Vector3(3.8, 2.2, 3.2)
+			velocity = Vector3(-facing_sign * 2.5, 11.0, 0.0)
+			_play_anim(&"signature_special_2", 1.15)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.0, 0.0, 0.0), Vector2(5.0, 3.5), 0.45)
+		_:
+			_current_move.move_id = &"heavy_strike"
+			_current_move.damage = 56.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.2)
+			_play_anim(&"light_combo", 1.15)
+
+
+func _setup_dadur_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Iron-Horn Suplex Grab
+			_current_move.move_id = &"horn_suplex"
+			_current_move.damage = 75.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.2)
+			velocity = Vector3(facing_sign * 8.5, 0.0, 0.0)
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.0, 0.0, 0.0), Vector2(4.0, 2.2), 0.35)
+		1:
+			# Snorting Hoof Flurry
+			_current_move.move_id = &"snorting_flurry"
+			_current_move.damage = 64.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(3.2, 1.8, 2.4)
+			_play_anim(&"light_combo", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 1.6, 0.0, 0.0), Vector2(3.2, 2.4), 0.30)
+		2:
+			# Courtyard Wall-Pin Tackle
+			_current_move.move_id = &"wall_pin_tackle"
+			_current_move.damage = 80.0
+			_current_move.hyper_armor = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(3.4, 2.2, 2.6)
+			velocity = Vector3(facing_sign * 13.0, 0.0, 0.0)
+			_play_anim(&"heavy_armor_breaker", 1.15)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.5, 0.0, 0.0), Vector2(9.0, 2.4), 0.32)
+		_:
+			_current_move.move_id = &"heavy_strike"
+			_current_move.damage = 60.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(2.6, 2.0, 2.0)
+			_play_anim(&"heavy_armor_breaker", 1.1)
+
+
+func _setup_baphomet_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Gran Via Bull-Rush Charge
+			_current_move.move_id = &"bull_rush_charge"
+			_current_move.damage = 85.0
+			_current_move.hyper_armor = true
+			_current_move.hitstop_frames = 7
+			_current_move.aoe_corridor_box = Vector3(3.8, 2.5, 3.2)
+			velocity = Vector3(facing_sign * 14.0, 0.0, 0.0)
+			_play_anim(&"heavy_armor_breaker", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 5.5, 0.0, 0.0), Vector2(11.0, 3.2), 0.34)
+		1:
+			# Molten Hoof Earthquake
+			_current_move.move_id = &"molten_earthquake"
+			_current_move.damage = 78.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(6.5, 2.2, 6.2)
+			_play_anim(&"signature_special_1", 1.15)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position, Vector2(6.5, 6.2), 0.40)
+		2:
+			# Brazen Horn Gore Throw
+			_current_move.move_id = &"gore_throw"
+			_current_move.damage = 72.0
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(3.2, 2.8, 2.6)
+			velocity = Vector3(facing_sign * 4.0, 8.5, 0.0)
+			_play_anim(&"signature_special_2", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.0, 0.0, 0.0), Vector2(3.5, 2.6), 0.36)
+		_:
+			_current_move.move_id = &"heavy_strike"
+			_current_move.damage = 65.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(3.0, 2.2, 2.4)
+			_play_anim(&"light_combo", 1.1)
+
+
+func _setup_andruas_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Full-Corridor Tail Whip Sweep (low full Z sweep - must jump!)
+			_current_move.move_id = &"tail_whip_sweep"
+			_current_move.damage = 70.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(6.0, 0.75, 6.4)
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.8, 0.0, 0.0), Vector2(5.8, 6.4), 0.38)
+		1:
+			# Coiling Crush Bind
+			_current_move.move_id = &"coiling_bind"
+			_current_move.damage = 76.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(3.2, 2.0, 2.4)
+			velocity = Vector3(facing_sign * 11.5, 0.0, 0.0)
+			_play_anim(&"signature_special_2", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.5, 0.0, 0.0), Vector2(7.0, 2.4), 0.32)
+		2:
+			# Venom Fang Lunge
+			_current_move.move_id = &"venom_lunge"
+			_current_move.damage = 65.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(3.6, 2.0, 2.2)
+			_play_anim(&"heavy_armor_breaker", 1.15)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.0, 0.0, 0.0), Vector2(4.0, 2.2), 0.35)
+		_:
+			_current_move.move_id = &"heavy_strike"
+			_current_move.damage = 58.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.0)
+			_play_anim(&"light_combo", 1.15)
+
+
+func _setup_beezelbub_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Drone Fly Swarm Call
+			_current_move.move_id = &"drone_swarm_call"
+			_current_move.damage = 50.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(3.0, 2.0, 3.0)
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position, Vector2(3.5, 3.5), 0.40)
+		1:
+			# Corrosive Venom Spit Pools (3 toxic projectiles)
+			_current_move.move_id = &"venom_spit"
+			_current_move.damage = 52.0
+			_current_move.hitstop_frames = 4
+			_play_anim(&"signature_special_2", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.0, 0.0, 0.0), Vector2(8.0, 5.0), 0.35)
+		2:
+			# Compound-Eye Strobe Evade (teleport buzz-dash)
+			_current_move.move_id = &"strobe_evade"
+			_current_move.damage = 45.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.5, 1.8, 2.5)
+			_play_anim(&"signature_special_2", 1.3)
+		_:
+			_current_move.move_id = &"mandible_strike"
+			_current_move.damage = 56.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.2)
+			_play_anim(&"light_combo", 1.15)
+
+
 func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 	if _current_move == null:
 		_enter_state(&"pursue")
@@ -398,15 +646,205 @@ func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 			_finish_boss_attack(0.78)
 		return
 
-	# Standard boss melee / shockwave timing (pickaxe_spin, wing_gust, heavy, light_combo)
+	# Chupar: Cannonball Sit-Drop & Bar: Talon Piledriver
+	if mid == &"cannonball_sit_drop" or mid == &"talon_piledriver":
+		if _state_timer < 0.36:
+			velocity.y -= GRAVITY * 0.45 * delta
+		elif _state_timer < 0.72:
+			velocity.y = -20.0
+			velocity.x = facing_sign * (2.2 if mid == &"cannonball_sit_drop" else 5.5)
+			if is_on_floor() and not _hit_registry.has("slam_landed"):
+				_hit_registry["slam_landed"] = true
+				if HitstopManager:
+					HitstopManager.trigger_camera_shake(0.42, 11.0)
+					HitstopManager.spawn_shockwave_ring(global_position, accent_color, 5.5, 0.45)
+				if SfxManager:
+					SfxManager.play_3d("heavy_thud", global_position, 0.0, 0.05)
+				_activate_aoe(Vector3.ZERO)
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 22.0 * delta)
+		if not is_on_floor() and _state_timer >= 0.72:
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.98:
+			_finish_boss_attack(0.85)
+		return
+
+	# Bar: Cyclone Glide
+	if mid == &"cyclone_glide":
+		if _state_timer >= 0.18 and _state_timer < 0.65:
+			velocity.x = facing_sign * 14.5
+			_activate_aoe(Vector3(facing_sign * 1.5, 1.0, 0.0))
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * 0.5 * delta
+		if _state_timer >= 0.88:
+			_finish_boss_attack(0.80)
+		return
+
+	# Dadur: Wall-Pin Tackle & Baphomet: Bull Rush Charge
+	if mid == &"wall_pin_tackle" or mid == &"bull_rush_charge":
+		var spd := 14.0 if mid == &"bull_rush_charge" else 13.0
+		if _state_timer >= 0.18 and _state_timer < 0.68:
+			velocity.x = facing_sign * spd
+			_activate_aoe(Vector3(facing_sign * 1.5, 1.0, 0.0))
+			if (global_position.x <= arena_x_min + 0.6 and velocity.x < 0.0) or (global_position.x >= arena_x_max - 0.6 and velocity.x > 0.0):
+				if not _hit_registry.has("wall_impact"):
+					_hit_registry["wall_impact"] = true
+					if HitstopManager:
+						HitstopManager.trigger_camera_shake(0.35, 9.5)
+						HitstopManager.spawn_shockwave_ring(global_position, accent_color, 3.5, 0.35)
+					if SfxManager:
+						SfxManager.play_3d("heavy_thud", global_position, 0.0, 0.05)
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.90:
+			_finish_boss_attack(0.85)
+		return
+
+	# Dadur: Horn Suplex & Andruas: Coiling Bind
+	if mid == &"horn_suplex" or mid == &"coiling_bind":
+		var spd := 11.5 if mid == &"coiling_bind" else 8.5
+		if _state_timer >= 0.15 and _state_timer < 0.55:
+			velocity.x = facing_sign * spd
+			_activate_aoe(Vector3(facing_sign * 1.3, 0.9, 0.0))
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 22.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.82:
+			_finish_boss_attack(0.78)
+		return
+
+	# Bar: Supersonic Screech Wave & Baphomet: Molten Earthquake
+	if mid == &"screech_wave" or mid == &"molten_earthquake":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.34 and _state_timer < 0.65:
+			_activate_aoe(Vector3(facing_sign * 1.8, 0.5, 0.0))
+			if not _hit_registry.has("earthquake_quake"):
+				_hit_registry["earthquake_quake"] = true
+				if HitstopManager:
+					HitstopManager.trigger_camera_shake(0.38, 11.0)
+					HitstopManager.spawn_shockwave_ring(global_position, accent_color, 6.2, 0.42)
+				if SfxManager:
+					SfxManager.play_3d("groan_demon" if mid == &"screech_wave" else "heavy_thud", global_position, 0.0, 0.05)
+		else:
+			_deactivate_hitboxes()
+		if _state_timer >= 0.88:
+			_finish_boss_attack(0.85)
+		return
+
+	# Andruas: Tail Whip Sweep (low corridor sweep requiring jump)
+	if mid == &"tail_whip_sweep":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.32 and _state_timer < 0.58:
+			_activate_aoe(Vector3(facing_sign * 2.2, 0.35, 0.0))
+			if not _hit_registry.has("sweep_sfx"):
+				_hit_registry["sweep_sfx"] = true
+				if SfxManager:
+					SfxManager.play_3d("special_whoosh", global_position, 0.0, 0.05)
+		else:
+			_deactivate_hitboxes()
+		if _state_timer >= 0.82:
+			_finish_boss_attack(0.75)
+		return
+
+	# Beezelbub: Corrosive Venom Spit Pools (3 toxic projectiles)
+	if mid == &"venom_spit":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.32 and not _hit_registry.has("spit_fired"):
+			_hit_registry["spit_fired"] = true
+			for vz in [-2.4, 0.0, 2.4]:
+				var proj := EnemyProjectile.new()
+				proj.attacker = self
+				proj.damage = _current_move.damage
+				proj.velocity = Vector3(facing_sign * 11.0, 0.0, vz)
+				get_parent().add_child(proj)
+				proj.global_position = global_position + Vector3(facing_sign * 0.9, 1.15, 0.0)
+			if SfxManager:
+				SfxManager.play_3d("special_whoosh", global_position, 0.0, 0.06)
+		if _state_timer >= 0.75:
+			_finish_boss_attack(0.75)
+		return
+
+	# Beezelbub: Drone Fly Swarm Call
+	if mid == &"drone_swarm_call":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.36 and not _hit_registry.has("swarm_called"):
+			_hit_registry["swarm_called"] = true
+			if HitstopManager:
+				HitstopManager.spawn_shockwave_ring(global_position, accent_color, 4.0, 0.35)
+			if SfxManager:
+				SfxManager.play_3d("groan_demon", global_position, 0.0, 0.05)
+			var enemies := get_tree().get_nodes_in_group("enemies")
+			if enemies.size() < 4:
+				const DRONE_SCENE = preload("res://scenes/enemies/wave_enemy.tscn")
+				for offset_z in [-1.5, 1.5]:
+					var drone := DRONE_SCENE.instantiate() as WaveEnemy
+					drone.arena_x_min = arena_x_min
+					drone.arena_x_max = arena_x_max
+					get_parent().add_child(drone)
+					drone.global_position = global_position + Vector3(-facing_sign * 1.8, 0.2, offset_z)
+					drone.configure_tier("drone", accent_color)
+			else:
+				for ang in [-3.2, 0.0, 3.2]:
+					var proj := EnemyProjectile.new()
+					proj.attacker = self
+					proj.damage = _current_move.damage * 0.7
+					proj.velocity = Vector3(facing_sign * 9.5, 0.0, ang)
+					get_parent().add_child(proj)
+					proj.global_position = global_position + Vector3(facing_sign * 0.8, 1.2, 0.0)
+		if _state_timer >= 0.80:
+			_finish_boss_attack(0.80)
+		return
+
+	# Beezelbub: Compound-Eye Strobe Evade
+	if mid == &"strobe_evade":
+		if _state_timer < 0.22:
+			velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		elif _state_timer < 0.45:
+			velocity.x = -facing_sign * 16.5
+			_activate_aoe(Vector3.ZERO)
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
+			if not _hit_registry.has("turned"):
+				_hit_registry["turned"] = true
+				facing_sign = -facing_sign
+				_update_facing_visual()
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.78:
+			_finish_boss_attack(0.70)
+		return
+
+	# Standard boss melee / shockwave timing (pickaxe_spin, hundred_palm_rush, wing_gust, heavy, light_combo)
 	if mid == &"pickaxe_spin":
 		velocity.x = facing_sign * 7.2
+	elif mid == &"hundred_palm_rush":
+		velocity.x = facing_sign * 5.2
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
 	if not is_on_floor():
 		velocity.y -= GRAVITY * delta
 
-	if _state_timer >= 0.36 and _state_timer < 0.62:
+	var act_start := 0.22 if mid == &"hundred_palm_rush" else 0.36
+	var act_end := 0.65 if mid == &"hundred_palm_rush" else 0.62
+	if _state_timer >= act_start and _state_timer < act_end:
 		_activate_aoe(Vector3(facing_sign * 1.4, 1.0, 0.0))
 		if mid == &"wing_gust":
 			var ply := get_tree().get_first_node_in_group("player") as CharacterBody3D
