@@ -521,6 +521,13 @@ func _test_synthwave_ui_styling() -> void:
 	_assert(not get_tree().paused, "Pressing pause quit button unpauses scene tree")
 	_assert(hud._next_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Next stage button has pointing hand cursor")
 	_assert(hud._replay_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Replay stage button has pointing hand cursor")
+
+	var res_b := hud.get("_resonance_box") as PanelContainer
+	_assert(res_b != null, "ArcadeHud instantiated _resonance_box")
+	_assert(res_b.anchor_left == 1.0 and res_b.anchor_top == 1.0, "Resonance box is anchored to bottom-right (PRESET_BOTTOM_RIGHT)")
+	_assert(res_b.offset_left == -268.0 and res_b.offset_top == -108.0, "Resonance box is positioned at bottom-right across from soundtrack toast (offsets %s, %s)" % [res_b.offset_left, res_b.offset_top])
+	_assert(res_b.custom_minimum_size == Vector2(250, 94), "Resonance box has compact 250x94 minimum size")
+
 	hud.free()
 
 
