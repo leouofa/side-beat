@@ -124,13 +124,14 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 	hp -= dmg
 	if HitstopManager:
 		HitstopManager.spawn_hit_spark(global_position + Vector3(0.0, 0.7, 0.0), Color("#FFE066"), 0.85)
-	if hp <= 0.0:
+	var was_destroyed := hp <= 0.0
+	if was_destroyed:
 		_shatter()
 	else:
 		var tw := create_tween()
 		tw.tween_property(_mesh_root, "scale", Vector3(1.18, 0.85, 1.18), 0.05)
 		tw.tween_property(_mesh_root, "scale", Vector3.ONE, 0.07)
-	return {"connected": true, "damage_dealt": dmg}
+	return {"connected": true, "damage_dealt": dmg, "destroyed": was_destroyed, "is_prop": true}
 
 
 func _shatter() -> void:
