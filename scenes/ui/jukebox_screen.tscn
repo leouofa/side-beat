@@ -1,0 +1,138 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/jukebox_screen.gd" id="1_juke"]
+
+[node name="JukeboxScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_juke")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.06, 0.1, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 28
+text = "SIDE BEAT — 37-TRACK ARCADE JUKEBOX"
+
+[node name="BackBtn" type="Button" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 40)
+text = "< ESC: BACK"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 520
+
+[node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TrackListHeader" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/LeftPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.83, 1, 1)
+text = "SELECT A SOUNDTRACK / RADIO BROADCAST:"
+
+[node name="TrackList" type="ItemList" parent="MarginContainer/VBoxContainer/HSplitContainer/LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="PlayerCard" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="NowPlayingHeader" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.12, 0.54, 1)
+text = "NOW PLAYING:"
+
+[node name="NowPlayingTitle" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "Track Title"
+
+[node name="NowPlayingContext" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 14
+text = "Track Context Info"
+
+[node name="SpectrumContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ControlsRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="PrevBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+text = "|< PREV"
+
+[node name="PlayPauseBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
+custom_minimum_size = Vector2(120, 44)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "PAUSE"
+
+[node name="NextBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
+custom_minimum_size = Vector2(100, 44)
+layout_mode = 2
+text = "NEXT >|"
+
+[node name="VolumeRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="VolumeLabel" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/VolumeRow"]
+layout_mode = 2
+text = "VOLUME:"
+
+[node name="VolumeSlider" type="HSlider" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/VolumeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.02
+value = 0.8

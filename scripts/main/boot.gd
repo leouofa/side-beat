@@ -1,12 +1,12 @@
 extends Node
-## Boot entry scene launching Milestone 1's New York City Urban World Tour stage
-## (In Milestone 4, transitions to the Title Screen & World Tour / Jukebox Menu).
+## Boot entry scene transitioning to the Arcade Title Screen & World Tour / Jukebox Menu.
+
+const TITLE_SCREEN_SCENE := "res://scenes/ui/title_screen.tscn"
 
 
 func _ready() -> void:
-	GameManager.start_new_tour(1, 0)
 	call_deferred("_enter_initial_scene")
 
 
 func _enter_initial_scene() -> void:
-	GameManager.load_stage(1)
+	get_tree().change_scene_to_file(TITLE_SCREEN_SCENE)

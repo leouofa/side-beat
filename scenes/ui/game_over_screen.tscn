@@ -1,0 +1,107 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/game_over_screen.gd" id="1_over"]
+
+[node name="GameOverScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_over")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.03, 0.04, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 36
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 36
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="GameOverTitle" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.12, 0.25, 1)
+theme_override_font_sizes/font_size = 56
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="FinalScoreLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "FINAL SCORE: 0000000"
+horizontal_alignment = 1
+
+[node name="InitialEntryContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="NewRecordPrompt" type="Label" parent="MarginContainer/VBoxContainer/InitialEntryContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.83, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "★ NEW RECORD! ENTER YOUR INITIALS (UP/DOWN/LEFT/RIGHT) ★"
+horizontal_alignment = 1
+
+[node name="LetterRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/InitialEntryContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="Letter1" type="Label" parent="MarginContainer/VBoxContainer/InitialEntryContainer/LetterRow"]
+custom_minimum_size = Vector2(48, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 48
+text = "A"
+horizontal_alignment = 1
+
+[node name="Letter2" type="Label" parent="MarginContainer/VBoxContainer/InitialEntryContainer/LetterRow"]
+custom_minimum_size = Vector2(48, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 48
+text = "A"
+horizontal_alignment = 1
+
+[node name="Letter3" type="Label" parent="MarginContainer/VBoxContainer/InitialEntryContainer/LetterRow"]
+custom_minimum_size = Vector2(48, 64)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.75, 0.85, 1)
+theme_override_font_sizes/font_size = 48
+text = "A"
+horizontal_alignment = 1
+
+[node name="SubmitBtn" type="Button" parent="MarginContainer/VBoxContainer/InitialEntryContainer"]
+custom_minimum_size = Vector2(260, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "CONFIRM INITIALS"
+
+[node name="TitleBtn" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(260, 44)
+layout_mode = 2
+size_flags_horizontal = 4
+text = "RETURN TO TITLE"

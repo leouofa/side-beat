@@ -1,0 +1,135 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/victory_screen.gd" id="1_vic"]
+
+[node name="VictoryScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_vic")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.04, 0.08, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_top = 32
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_bottom = 32
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="VictoryTitle" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_colors/font_shadow_color = Color(1, 0.12, 0.54, 1)
+theme_override_constants/shadow_offset_x = 3
+theme_override_constants/shadow_offset_y = 3
+theme_override_font_sizes/font_size = 42
+text = "★ WORLD TOUR CONQUERED ★"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.83, 1, 1)
+theme_override_font_sizes/font_size = 18
+text = "THE INFERNAL TRIAD HAS FALLEN — THE PANTHEONS REIGN SUPREME"
+horizontal_alignment = 1
+
+[node name="StatsRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 24
+alignment = 1
+
+[node name="ScoreLbl" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+text = "TOTAL SCORE:"
+
+[node name="ScoreVal" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 20
+text = "0150000"
+
+[node name="RankLbl" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+text = "BEST RESONANCE:"
+
+[node name="RankVal" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.12, 0.54, 1)
+theme_override_font_sizes/font_size = 20
+text = "GODLIKE"
+
+[node name="CreditsLbl" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+text = "CONTINUES USED:"
+
+[node name="CreditsVal" type="Label" parent="MarginContainer/VBoxContainer/StatsRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1)
+theme_override_font_sizes/font_size = 20
+text = "1 CONTINUES"
+
+[node name="CreditsScroll" type="ScrollContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CreditsBody" type="RichTextLabel" parent="MarginContainer/VBoxContainer/CreditsScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 15
+bbcode_enabled = true
+text = "[center]
+[color=#FFD700][b]SIDE BEAT[/b][/color]
+[color=#00D4FF]An Ancient Pantheons Urban World Tour Beat 'Em Up[/color]
+
+[b]— THE FOUR GODS OF THE SHARED SOUL —[/b]
+Endor (Asgardian Realm of Thunder)
+Ir (Olympian Peak of Lightning)
+Osiris (Duat Underworld of Eternity)
+Horus (Solar Eye of the Morning)
+
+[b]— THE DEFEATED MYTHIC FOES —[/b]
+Stage 1: Chadzug (Gnome) & Beebo (Bird)
+Stage 2: Chupar (Sumo) & Bar (Falcon)
+Stage 3: Dadur (Minotaur) & Baphomet (Demon Bull)
+Stage 4: Andruas (Naga) & Beezelbub (Fly God)
+Stage 5: Baba (Crone) & Devil (Infernal Triad #1)
+Stage 6: Satan (Abyssal Arch-Demon #2)
+Stage 7: Lucifer (Supreme Seraph #3)
+
+[b]— CURATED 37-TRACK SOUNDTRACK —[/b]
+Including \"Big Zeus\", \"Widjet\", \"Iced Out\",
+\"Silicon Smoke Signals\", \"Olympus Mainframe\",
+\"Pantheon in Neon\", and \"The Wrath of Osiris\"
+
+[b]DEVELOPED WITH GODOT 4.7.2 & BLENDER 5.2[/b]
+[color=#FF1E8A]THANK YOU FOR PLAYING SIDE BEAT![/color]
+[/center]"
+
+[node name="ReturnBtn" type="Button" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(280, 48)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "RETURN TO TITLE SCREEN"

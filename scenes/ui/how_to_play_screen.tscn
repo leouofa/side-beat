@@ -1,0 +1,114 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/how_to_play_screen.gd" id="1_how"]
+
+[node name="HowToPlayScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_how")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.06, 0.07, 0.12, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 48
+theme_override_constants/margin_top = 28
+theme_override_constants/margin_right = 48
+theme_override_constants/margin_bottom = 28
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Header" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 28
+text = "HOW TO PLAY — ARCADE MASTER MANUAL"
+
+[node name="BackBtn" type="Button" parent="MarginContainer/VBoxContainer/Header"]
+layout_mode = 2
+custom_minimum_size = Vector2(140, 40)
+text = "< ESC: BACK"
+
+[node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 580
+
+[node name="LeftCol" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ControlsHeader" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/LeftCol"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0.83, 1, 1)
+theme_override_font_sizes/font_size = 20
+text = "1. ARCADE COMBAT INPUTS"
+
+[node name="ControlsBody" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HSplitContainer/LeftCol"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[b]MOVE (2.5D BELT):[/b] WASD or Arrow Keys / Left Stick
+[b]JUMP / DOUBLE JUMP:[/b] Space / South (A)
+[b]LIGHT ATTACK (3-Hit):[/b] J or Z / West (X)
+[b]HEAVY GUARD CRUSH:[/b] K or X / North (Y)
+[b]UP-LAUNCHER SLAM:[/b] Up + Heavy (K)
+[b]AERIAL JUGGLE:[/b] Light or Heavy in Mid-Air
+[b]PERFECT PARRY (8-Frame):[/b] U or Shift / Left Trigger
+[b]LANE BOWLING THROW:[/b] I or G / Right Bumper
+[b]PANTHEON SPECIALS (25% Meter):[/b] L or C / East (B)
+[b]PANTHEON SUPER (100% Meter):[/b] O or V / Right Trigger"
+
+[node name="RightCol" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="MorphHeader" type="Label" parent="MarginContainer/VBoxContainer/HSplitContainer/RightCol"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.12, 0.54, 1)
+theme_override_font_sizes/font_size = 20
+text = "2. SHARED-SOUL MORPH & RESONANCE"
+
+[node name="MorphBody" type="RichTextLabel" parent="MarginContainer/VBoxContainer/HSplitContainer/RightCol"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 14
+bbcode_enabled = true
+text = "[b]ZERO-COOLDOWN MORPHING (Keys 1-4 / Q & E / D-Pad):[/b]
+Morph instantly mid-combo! Preserves velocity, facing, and active combo state with 2 frames of hitstun immunity.
+
+[color=#00D4FF][b][1] ENDOR (Asgardian):[/b][/color] Heavy armor-crusher, high poise, thunder hammer.
+[color=#FFE066][b][2] IR (Olympian):[/b][/color] Flash-step rapier combos, Aegis riposte on parry.
+[color=#2ECC71][b][3] OSIRIS (Egyptian):[/b][/color] Mid-range Duat crowd control, Soul Harvest HP siphon.
+[color=#FF7A00][b][4] HORUS (Egyptian):[/b][/color] Aerial mobility, double-jump hover, dive juggles.
+
+[b]CROSS-PANTHEON RESONANCE MULTIPLIER:[/b]
+• 1 God: 1.00x Base Multiplier
+• 2 Gods in combo: [color=#FFE066]1.75x Score Bonus[/color]
+• 3 Gods in combo: [color=#2ECC71]2.75x Score Bonus[/color]
+• 4 Gods in combo: [color=#FF1E8A]4.00x GODLIKE Cross-Pantheon Bonus![/color]"

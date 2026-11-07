@@ -26,6 +26,9 @@ func _ready() -> void:
 	_test_stages_2_to_4_generation()
 	_test_stages_5_to_7_generation()
 	_test_hitstop_manager_camera_shake()
+	_test_arcade_menus_and_ui()
+	_test_stage_grading_math()
+	_test_continue_credit_fairness()
 	_test_save_persistence()
 
 	print("==============================================")
@@ -334,6 +337,92 @@ func _test_hitstop_manager_camera_shake() -> void:
 	_assert(is_equal_approx(received[0], 0.35), "trigger_camera_shake(0.35) emits camera_shake_requested(0.35)")
 
 	HitstopManager.camera_shake_requested.disconnect(handler)
+
+
+func _test_arcade_menus_and_ui() -> void:
+	# Title Screen
+	var title_scene := load("res://scenes/ui/title_screen.tscn") as PackedScene
+	_assert(title_scene != null, "title_screen.tscn loads cleanly")
+	var title_inst := title_scene.instantiate()
+	add_child(title_inst)
+	_assert(title_inst.has_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn"), "Title screen has StartTourBtn")
+	title_inst.free()
+
+	# God Select Screen
+	var godsel_scene := load("res://scenes/ui/god_select_screen.tscn") as PackedScene
+	_assert(godsel_scene != null, "god_select_screen.tscn loads cleanly")
+	var godsel_inst := godsel_scene.instantiate()
+	add_child(godsel_inst)
+	_assert(godsel_inst.has_node("MarginContainer/VBoxContainer/BottomRow/StartTourBtn"), "God select screen has StartTourBtn")
+	godsel_inst.free()
+
+	# Jukebox Screen
+	var juke_scene := load("res://scenes/ui/jukebox_screen.tscn") as PackedScene
+	_assert(juke_scene != null, "jukebox_screen.tscn loads cleanly")
+	var juke_inst := juke_scene.instantiate()
+	add_child(juke_inst)
+	var tracks: Array = juke_inst.get("_all_tracks")
+	_assert(tracks != null and tracks.size() == 37, "Jukebox maps all 37 tracks")
+	juke_inst.free()
+
+	# Leaderboard Screen
+	var lead_scene := load("res://scenes/ui/leaderboard_screen.tscn") as PackedScene
+	_assert(lead_scene != null, "leaderboard_screen.tscn loads cleanly")
+	var lead_inst := lead_scene.instantiate()
+	add_child(lead_inst)
+	_assert(lead_inst.has_node("MarginContainer/VBoxContainer/ScrollContainer/TableContainer"), "Leaderboard screen has TableContainer")
+	lead_inst.free()
+
+	# How To Play Screen
+	var htp_scene := load("res://scenes/ui/how_to_play_screen.tscn") as PackedScene
+	_assert(htp_scene != null, "how_to_play_screen.tscn loads cleanly")
+	var htp_inst := htp_scene.instantiate()
+	add_child(htp_inst)
+	_assert(htp_inst.has_node("MarginContainer/VBoxContainer/Header/BackBtn"), "How to Play screen has BackBtn")
+	htp_inst.free()
+
+	# Game Over Screen
+	var go_scene := load("res://scenes/ui/game_over_screen.tscn") as PackedScene
+	_assert(go_scene != null, "game_over_screen.tscn loads cleanly")
+	var go_inst := go_scene.instantiate()
+	add_child(go_inst)
+	_assert(go_inst.has_node("MarginContainer/VBoxContainer/TitleBtn"), "Game Over screen has TitleBtn")
+	go_inst.free()
+
+	# Victory Screen
+	var vic_scene := load("res://scenes/ui/victory_screen.tscn") as PackedScene
+	_assert(vic_scene != null, "victory_screen.tscn loads cleanly")
+	var vic_inst := vic_scene.instantiate()
+	add_child(vic_inst)
+	_assert(vic_inst.has_node("MarginContainer/VBoxContainer/ReturnBtn"), "Victory screen has ReturnBtn")
+	vic_inst.free()
+
+
+func _test_stage_grading_math() -> void:
+	GameManager.reset_stage_metrics()
+	GameManager.stage_elapsed_sec = 120.0
+	GameManager.stage_max_combo = 40
+	GameManager.stage_damage_taken = 150.0
+	GameManager.stage_max_variety = 4
+	var s_rank := GameManager.compute_stage_rank()
+	_assert(s_rank["rank"] == "S", "120s clear, 40-hit combo, 150 dmg, 4 gods achieves S-Rank (got %s)" % s_rank["rank"])
+
+	GameManager.reset_stage_metrics()
+	GameManager.stage_elapsed_sec = 320.0
+	GameManager.stage_max_combo = 5
+	GameManager.stage_damage_taken = 980.0
+	GameManager.stage_max_variety = 1
+	var c_rank := GameManager.compute_stage_rank()
+	_assert(c_rank["rank"] == "C" or c_rank["rank"] == "B", "Slow clear, low combo, high damage yields B/C-Rank (got %s)" % c_rank["rank"])
+
+
+func _test_continue_credit_fairness() -> void:
+	GameManager.credits_remaining = 3
+	GameManager.run_score = 50000
+	var success := GameManager.use_continue_credit()
+	_assert(success, "use_continue_credit returns true when credits remain")
+	_assert(GameManager.credits_remaining == 2, "Continue consumes 1 credit (now 2)")
+	_assert(GameManager.run_score == 0, "Continue resets run score to 0 for leaderboard fairness")
 
 
 func _test_save_persistence() -> void:

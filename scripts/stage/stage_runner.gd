@@ -99,6 +99,9 @@ func _on_stage_boss_cleared() -> void:
 
 
 func _on_restart_requested() -> void:
+	if GameManager and GameManager.credits_remaining <= 0:
+		get_tree().change_scene_to_file("res://scenes/ui/game_over_screen.tscn")
+		return
 	var st := GameManager.current_stage if GameManager else 1
 	if GameManager:
 		GameManager.start_new_tour(st, player.active_slot if is_instance_valid(player) else 0)
@@ -112,4 +115,4 @@ func _on_next_stage_requested() -> void:
 	if next_st <= GameManager.max_implemented_stage:
 		GameManager.load_stage(next_st)
 	else:
-		GameManager.load_stage(GameManager.current_stage)
+		get_tree().change_scene_to_file("res://scenes/ui/victory_screen.tscn")
