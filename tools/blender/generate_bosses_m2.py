@@ -119,6 +119,8 @@ def author_standard_boss_clips_m2(arm_obj: bpy.types.Object, has_wings: bool = F
         (45, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
+    hips_rest_z = arm_obj.pose.bones["hips"].head.z if "hips" in arm_obj.pose.bones else 0.94
+    dy = -(hips_rest_z - 0.18)
     ko = {
         "hips": (-85, 0, 0), "spine_01": (-10, 0, 0),
         "upper_arm.L": (-18, 52, 0), "upper_arm.R": (-18, -52, 0),
@@ -126,8 +128,8 @@ def author_standard_boss_clips_m2(arm_obj: bpy.types.Object, has_wings: bool = F
     }
     author_nla_action(arm_obj, "ko_collapse", [
         (1, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
-        (18, ko, {"hips": (0.0, 0.20, -0.52)}),
-        (45, ko, {"hips": (0.0, 0.20, -0.52)}),
+        (18, ko, {"hips": (0.0, dy, 0.18)}),
+        (45, ko, {"hips": (0.0, dy, 0.18)}),
     ])
 
 
