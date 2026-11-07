@@ -46,6 +46,19 @@ const TIER_CONFIGS := {
 		"pants_color": Color("#191324"),
 		"accent_color": Color("#FF1E42"),
 	},
+	"drone": {
+		"title": "Plague Drone",
+		"scale": 1.45,
+		"max_hp": 95.0,
+		"poise_max": 0.0,
+		"move_speed": 5.4,
+		"attack_damage": 24.0,
+		"score": 180,
+		"glb": "res://assets/enemies/drone_fly.glb",
+		"jacket_color": Color("#1E272E"),
+		"pants_color": Color("#1E272E"),
+		"accent_color": Color("#A3CB38"),
+	},
 }
 
 var tier_id: String = "thug"
@@ -126,6 +139,14 @@ func configure_tier(new_tier: String, city_tint: Color = Color.WHITE) -> void:
 	move_speed = float(cfg["move_speed"])
 	attack_damage = float(cfg["attack_damage"])
 	score_value = int(cfg["score"])
+
+	var custom_glb := String(cfg.get("glb", ""))
+	if not custom_glb.is_empty():
+		if _rig_root:
+			_rig_root.queue_free()
+		_rig_root = GlbLoader.instantiate_glb(custom_glb)
+		_visual_pivot.add_child(_rig_root)
+		_anim = GlbLoader.find_anim_player(_rig_root)
 
 	if _visual_pivot:
 		_visual_pivot.scale = Vector3.ONE * sc
