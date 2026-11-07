@@ -103,7 +103,7 @@ const STAGES := {
 		"neon_a": Color("#00F0FF"),
 		"neon_b": Color("#FF007F"),
 		"props": ["vending_machine", "arcade_cabinet"],
-		"hazard": "steam_vent",
+		"hazard": "electric_arc",
 	},
 	7: {
 		"stage": 7,
@@ -120,6 +120,6 @@ const STAGES := {
 		"neon_a": Color("#FFD700"),
 		"neon_b": Color("#00D4FF"),
 		"props": ["marble_column", "cafe_table"],
-		"hazard": "steam_vent",
+		"hazard": "lava_brazier",
 	},
 }

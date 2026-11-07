@@ -238,6 +238,14 @@ func _choose_next_boss_attack(player: Node3D) -> void:
 		_setup_andruas_pattern(player)
 	elif boss_id == "beezelbub":
 		_setup_beezelbub_pattern(player)
+	elif boss_id == "baba":
+		_setup_baba_pattern(player)
+	elif boss_id == "devil":
+		_setup_devil_pattern(player)
+	elif boss_id == "satan":
+		_setup_satan_pattern(player)
+	elif boss_id == "lucifer":
+		_setup_lucifer_pattern(player)
 	else:
 		_setup_generic_mythic_pattern(player)
 
@@ -570,6 +578,197 @@ func _setup_beezelbub_pattern(_player: Node3D) -> void:
 			_play_anim(&"light_combo", 1.15)
 
 
+func _setup_baba_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Heavy Pestle Ground Pound
+			_current_move.move_id = &"pestle_pound"
+			_current_move.damage = 72.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(4.2, 2.0, 4.0)
+			_play_anim(&"heavy_armor_breaker", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 2.2, 0.0, 0.0), Vector2(4.5, 4.0), 0.38)
+		1:
+			# Toxic Potion Brew Spread
+			_current_move.move_id = &"potion_toxic_cloud"
+			_current_move.damage = 58.0
+			_current_move.hitstop_frames = 4
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.5, 0.0, 0.0), Vector2(7.0, 4.5), 0.35)
+		2:
+			# Cackling Mortar Dash
+			_current_move.move_id = &"cackle_dash"
+			_current_move.damage = 54.0
+			_current_move.hitstop_frames = 5
+			_current_move.aoe_corridor_box = Vector3(3.2, 1.8, 2.2)
+			_play_anim(&"signature_special_2", 1.25)
+		_:
+			_current_move.move_id = &"pestle_strike"
+			_current_move.damage = 52.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.6, 1.8, 2.0)
+			_play_anim(&"light_combo", 1.15)
+
+
+func _setup_devil_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# Trident Skewer Thrust
+			_current_move.move_id = &"pitchfork_skewer"
+			_current_move.damage = 78.0
+			_current_move.hyper_armor = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(3.8, 2.2, 2.5)
+			_play_anim(&"heavy_armor_breaker", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.0, 0.0, 0.0), Vector2(6.0, 2.5), 0.34)
+		1:
+			# Brimstone Hellfire Puddle
+			_current_move.move_id = &"hellfire_puddle"
+			_current_move.damage = 74.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(6.5, 2.0, 5.5)
+			_play_anim(&"signature_special_1", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position, Vector2(6.5, 5.5), 0.38)
+		2:
+			# Bat-Wing Hell Dive
+			_current_move.move_id = &"dive_bomb_hell"
+			_current_move.damage = 84.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 7
+			_current_move.aoe_corridor_box = Vector3(4.8, 2.2, 4.5)
+			velocity = Vector3(facing_sign * 3.0, 11.0, 0.0)
+			_play_anim(&"signature_special_2", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.0, 0.0, 0.0), Vector2(5.5, 4.5), 0.44)
+		_:
+			_current_move.move_id = &"trident_slash"
+			_current_move.damage = 58.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(2.8, 2.0, 2.2)
+			_play_anim(&"light_combo", 1.15)
+
+
+func _setup_satan_pattern(_player: Node3D) -> void:
+	match _pattern_index:
+		0:
+			# High-Voltage Screen Wipe
+			_current_move.move_id = &"electric_screen_wipe"
+			_current_move.damage = 88.0
+			_current_move.unblockable = true
+			_current_move.hitstop_frames = 7
+			_current_move.aoe_corridor_box = Vector3(8.5, 2.8, 6.0)
+			_play_anim(&"signature_special_1", 1.25)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.2, 0.0, 0.0), Vector2(8.5, 6.0), 0.40)
+		1:
+			# Plasma Teleport Dive
+			_current_move.move_id = &"plasma_teleport_dive"
+			_current_move.damage = 82.0
+			_current_move.hyper_armor = true
+			_current_move.hitstop_frames = 6
+			_current_move.aoe_corridor_box = Vector3(4.5, 2.2, 4.0)
+			velocity = Vector3(facing_sign * 2.5, 10.5, 0.0)
+			_play_anim(&"signature_special_2", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.5, 0.0, 0.0), Vector2(5.0, 4.0), 0.42)
+		2:
+			# Electric Shockwave Grid
+			_current_move.move_id = &"thunder_trap_grid"
+			_current_move.damage = 65.0
+			_current_move.hitstop_frames = 5
+			_play_anim(&"heavy_armor_breaker", 1.2)
+			if HitstopManager:
+				HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.0, 0.0, 0.0), Vector2(7.5, 4.5), 0.35)
+		_:
+			_current_move.move_id = &"plasma_claw_combo"
+			_current_move.damage = 62.0
+			_current_move.hitstop_frames = 4
+			_current_move.aoe_corridor_box = Vector3(3.0, 2.0, 2.2)
+			_play_anim(&"light_combo", 1.2)
+
+
+func _setup_lucifer_pattern(player: Node3D) -> void:
+	if phase == 1:
+		match _pattern_index:
+			0:
+				# Light Pillar Celestial Beam
+				_current_move.move_id = &"light_pillar_beam"
+				_current_move.damage = 90.0
+				_current_move.unblockable = true
+				_current_move.hitstop_frames = 7
+				_current_move.aoe_corridor_box = Vector3(4.8, 4.5, 4.8)
+				_play_anim(&"signature_special_1", 1.2)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(player.global_position, Vector2(5.0, 5.0), 0.42)
+			1:
+				# 6-Wing Seraph Feather Barrage
+				_current_move.move_id = &"feather_barrage"
+				_current_move.damage = 75.0
+				_current_move.hitstop_frames = 5
+				_play_anim(&"signature_special_2", 1.25)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.5, 0.0, 0.0), Vector2(9.0, 5.5), 0.36)
+			2:
+				# Radiant Colosseum Sweep
+				_current_move.move_id = &"radiant_sweep"
+				_current_move.damage = 80.0
+				_current_move.hyper_armor = true
+				_current_move.hitstop_frames = 6
+				_current_move.aoe_corridor_box = Vector3(4.0, 2.2, 2.8)
+				_play_anim(&"heavy_armor_breaker", 1.2)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 3.5, 0.0, 0.0), Vector2(7.0, 2.8), 0.32)
+			_:
+				_current_move.move_id = &"celestial_slash"
+				_current_move.damage = 66.0
+				_current_move.hitstop_frames = 4
+				_current_move.aoe_corridor_box = Vector3(3.2, 2.0, 2.2)
+				_play_anim(&"light_combo", 1.2)
+	else:
+		# Phase 2: Infernal Shadow Metamorphosis
+		match _pattern_index:
+			0:
+				# Dark Matter Colosseum Implosion
+				_current_move.move_id = &"dark_matter_implosion"
+				_current_move.damage = 95.0
+				_current_move.unblockable = true
+				_current_move.hitstop_frames = 8
+				_current_move.aoe_corridor_box = Vector3(7.5, 3.2, 7.5)
+				_play_anim(&"signature_special_1", 1.3)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(global_position, Vector2(8.0, 8.0), 0.45)
+			1:
+				# Shadow Teleport Dash Flurry
+				_current_move.move_id = &"shadow_dash_flurry"
+				_current_move.damage = 85.0
+				_current_move.hyper_armor = true
+				_current_move.hitstop_frames = 6
+				_current_move.aoe_corridor_box = Vector3(3.8, 2.2, 2.8)
+				_play_anim(&"heavy_armor_breaker", 1.3)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 5.0, 0.0, 0.0), Vector2(10.0, 3.0), 0.30)
+			2:
+				# Crimson Rain
+				_current_move.move_id = &"crimson_rain"
+				_current_move.damage = 82.0
+				_current_move.hitstop_frames = 5
+				_play_anim(&"signature_special_2", 1.3)
+				if HitstopManager:
+					HitstopManager.spawn_ground_telegraph(global_position + Vector3(facing_sign * 4.0, 0.0, 0.0), Vector2(8.0, 5.0), 0.35)
+			_:
+				_current_move.move_id = &"void_rapier_thrust"
+				_current_move.damage = 72.0
+				_current_move.hitstop_frames = 5
+				_current_move.aoe_corridor_box = Vector3(3.4, 2.0, 2.4)
+				_play_anim(&"light_combo", 1.25)
+
+
 func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 	if _current_move == null:
 		_enter_state(&"pursue")
@@ -830,6 +1029,108 @@ func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 			velocity.y -= GRAVITY * delta
 		if _state_timer >= 0.78:
 			_finish_boss_attack(0.70)
+		return
+
+	# Devil: Bat-Wing Hell Dive & Satan: Plasma Teleport Dive
+	if mid == &"dive_bomb_hell" or mid == &"plasma_teleport_dive":
+		if _state_timer < 0.35:
+			velocity.y -= GRAVITY * 0.45 * delta
+		elif _state_timer < 0.72:
+			velocity.y = -21.0
+			velocity.x = facing_sign * (3.5 if mid == &"dive_bomb_hell" else 2.5)
+			if is_on_floor() and not _hit_registry.has("slam_landed"):
+				_hit_registry["slam_landed"] = true
+				if HitstopManager:
+					HitstopManager.trigger_camera_shake(0.45, 12.0)
+					HitstopManager.spawn_shockwave_ring(global_position, accent_color, 5.8, 0.45)
+				if SfxManager:
+					SfxManager.play_3d("heavy_thud", global_position, 0.0, 0.05)
+				_activate_aoe(Vector3.ZERO)
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 22.0 * delta)
+		if not is_on_floor() and _state_timer >= 0.72:
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.98:
+			_finish_boss_attack(0.85)
+		return
+
+	# Satan: High-Voltage Electric Screen Wipe & Lucifer: Light Pillar Beam & Dark Matter Implosion
+	if mid == &"electric_screen_wipe" or mid == &"light_pillar_beam" or mid == &"dark_matter_implosion":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.34 and _state_timer < 0.68:
+			_activate_aoe(Vector3(facing_sign * 2.0, 1.0, 0.0))
+			if not _hit_registry.has("wipe_triggered"):
+				_hit_registry["wipe_triggered"] = true
+				if HitstopManager:
+					HitstopManager.trigger_camera_shake(0.48, 14.0)
+					HitstopManager.spawn_shockwave_ring(global_position, accent_color, 8.5, 0.50)
+					if mid == &"light_pillar_beam":
+						HitstopManager.spawn_lightning_pillar(global_position + Vector3(facing_sign * 2.0, 0.0, 0.0), accent_color, 5.0, 0.5)
+				if SfxManager:
+					SfxManager.play_3d("hit_thunder" if mid != &"dark_matter_implosion" else "ko_boom", global_position, 0.0, 0.05)
+		else:
+			_deactivate_hitboxes()
+		if _state_timer >= 0.95:
+			_finish_boss_attack(0.85)
+		return
+
+	# Baba: Potion Toxic Cloud & Satan: Thunder Trap Grid & Lucifer: Feather Barrage & Crimson Rain
+	if mid == &"potion_toxic_cloud" or mid == &"thunder_trap_grid" or mid == &"feather_barrage" or mid == &"crimson_rain":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.32 and not _hit_registry.has("proj_barrage_fired"):
+			_hit_registry["proj_barrage_fired"] = true
+			var spreads := [-3.5, -1.8, 0.0, 1.8, 3.5] if (mid == &"feather_barrage" or mid == &"crimson_rain") else [-2.8, 0.0, 2.8]
+			for vz in spreads:
+				var proj := EnemyProjectile.new()
+				proj.attacker = self
+				proj.damage = _current_move.damage
+				proj.velocity = Vector3(facing_sign * 11.5, 0.0, vz)
+				get_parent().add_child(proj)
+				proj.global_position = global_position + Vector3(facing_sign * 0.9, 1.25, 0.0)
+			if SfxManager:
+				SfxManager.play_3d("hit_blade" if mid == &"feather_barrage" else "hit_thunder", global_position, 0.0, 0.06)
+		if _state_timer >= 0.78:
+			_finish_boss_attack(0.78)
+		return
+
+	# High-Speed Charges: Devil Pitchfork Skewer, Baba Cackle Dash, Lucifer Radiant Sweep & Shadow Dash Flurry
+	if mid == &"pitchfork_skewer" or mid == &"cackle_dash" or mid == &"radiant_sweep" or mid == &"shadow_dash_flurry":
+		var spd := 16.0 if mid == &"shadow_dash_flurry" else (13.5 if mid == &"radiant_sweep" else 11.8)
+		if _state_timer >= 0.16 and _state_timer < 0.62:
+			velocity.x = facing_sign * spd
+			_activate_aoe(Vector3(facing_sign * 1.5, 0.9, 0.0))
+		else:
+			_deactivate_hitboxes()
+			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.88:
+			_finish_boss_attack(0.80)
+		return
+
+	# Ground Shockwaves: Baba Pestle Pound & Devil Hellfire Puddle
+	if mid == &"pestle_pound" or mid == &"hellfire_puddle":
+		velocity.x = move_toward(velocity.x, 0.0, 18.0 * delta)
+		if not is_on_floor():
+			velocity.y -= GRAVITY * delta
+		if _state_timer >= 0.35 and _state_timer < 0.65:
+			_activate_aoe(Vector3(facing_sign * 1.6, 0.5, 0.0))
+			if not _hit_registry.has("slam_shockwave"):
+				_hit_registry["slam_shockwave"] = true
+				if HitstopManager:
+					HitstopManager.trigger_camera_shake(0.40, 11.0)
+					HitstopManager.spawn_shockwave_ring(global_position, accent_color, 6.0, 0.42)
+				if SfxManager:
+					SfxManager.play_3d("heavy_thud", global_position, 0.0, 0.05)
+		else:
+			_deactivate_hitboxes()
+		if _state_timer >= 0.88:
+			_finish_boss_attack(0.85)
 		return
 
 	# Standard boss melee / shockwave timing (pickaxe_spin, hundred_palm_rush, wing_gust, heavy, light_combo)

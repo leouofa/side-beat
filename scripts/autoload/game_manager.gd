@@ -19,7 +19,7 @@ var stage_damage_taken: float = 0.0
 var stage_max_combo: int = 0
 var stage_max_variety: int = 1
 var stage_best_resonance: String = "D"
-var max_implemented_stage: int = 4 # Advances M1 (1) -> M2 (4) -> M3/M4 (7)
+var max_implemented_stage: int = 7 # Advances M1 (1) -> M2 (4) -> M3/M4 (7)
 
 
 func start_new_tour(stage_num: int = 1, god_slot: int = 0) -> void:

@@ -35,6 +35,18 @@ func _ready() -> void:
 		mat.albedo_color = Color(0.55, 0.88, 1.0, 0.65)
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mat.roughness = 0.08
+	elif hazard_kind == "lava_brazier":
+		mat.albedo_color = Color("#8B2500")
+		mat.metallic = 0.70
+		mat.emission_enabled = true
+		mat.emission = Color("#FF4500")
+		mat.emission_energy_multiplier = 0.8
+	elif hazard_kind == "electric_arc":
+		mat.albedo_color = Color("#17202A")
+		mat.metallic = 0.85
+		mat.emission_enabled = true
+		mat.emission = Color("#00F0FF")
+		mat.emission_energy_multiplier = 0.9
 	else:
 		mat.albedo_color = Color("#3D3D3D")
 		mat.metallic = 0.65
@@ -64,19 +76,34 @@ func _physics_process(delta: float) -> void:
 
 
 func _erupt_jet() -> void:
-	var jet_color := Color("#C8D6E5") if hazard_kind == "steam_vent" else Color("#00D4FF")
+	var jet_color := Color("#C8D6E5")
+	var dmg := 28.0
+	if hazard_kind == "lava_brazier":
+		jet_color = Color("#FF4500")
+		dmg = 34.0
+		if SfxManager:
+			SfxManager.play_3d("heavy_thud", global_position, 0.0, 0.05)
+	elif hazard_kind == "electric_arc":
+		jet_color = Color("#00F0FF")
+		dmg = 30.0
+		if SfxManager:
+			SfxManager.play_3d("hit_thunder", global_position, 0.0, 0.05)
+	else:
+		if SfxManager:
+			SfxManager.play_3d("special_whoosh", global_position, 0.0, 0.05)
+
 	if HitstopManager:
 		HitstopManager.spawn_lightning_pillar(global_position, jet_color, 3.4, 0.42)
 	for body in get_overlapping_bodies():
 		if body is SharedSoulPlayer:
 			var m := AttackData.new()
-			m.damage = 28.0
-			body.receive_hit({"attack_data": m, "raw_damage": 28.0, "facing_sign": -1.0})
+			m.damage = dmg
+			body.receive_hit({"attack_data": m, "raw_damage": dmg, "facing_sign": -1.0})
 		elif body.has_method("receive_hit"):
 			var em := AttackData.new()
 			em.launches_airborne = true
 			em.knockback_vel = Vector3(1.5, 8.2, 0.0)
-			body.receive_hit({"attack_data": em, "raw_damage": 40.0, "armor_damage": 35.0, "facing_sign": 1.0})
+			body.receive_hit({"attack_data": em, "raw_damage": dmg * 1.35, "armor_damage": 35.0, "facing_sign": 1.0})
 
 
 func _on_ice_entered(body: Node3D) -> void:
