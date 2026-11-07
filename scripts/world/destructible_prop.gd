@@ -136,7 +136,7 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 func _shatter() -> void:
 	_destroyed = true
 	if _hurtbox:
-		_hurtbox.monitorable = false
+		_hurtbox.deactivate()
 	if SfxManager:
 		SfxManager.play_3d("prop_smash", global_position, 0.0, 0.08)
 

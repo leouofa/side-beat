@@ -31,6 +31,18 @@ func setup(actor: Node, is_player_team: bool, box_size: Vector3 = Vector3(0.85, 
 	_shape_node.position = Vector3(0.0, y_center, 0.0)
 
 
+func set_active(active: bool) -> void:
+	set_deferred(&"monitorable", active)
+
+
+func deactivate() -> void:
+	set_deferred(&"monitorable", false)
+
+
+func activate() -> void:
+	set_deferred(&"monitorable", true)
+
+
 func receive_strike(payload: Dictionary) -> Dictionary:
 	if owner_actor and owner_actor.has_method("receive_hit"):
 		return owner_actor.receive_hit(payload)

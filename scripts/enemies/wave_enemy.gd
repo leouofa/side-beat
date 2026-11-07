@@ -482,9 +482,9 @@ func _die(dir_sign: float) -> void:
 	_is_dead = true
 	_hitbox.deactivate()
 	_hp_bar_root.visible = false
-	collision_layer = 0
+	set_deferred(&"collision_layer", 0)
 	if _hurtbox:
-		_hurtbox.monitorable = false
+		_hurtbox.deactivate()
 	velocity = Vector3(dir_sign * 5.8, 4.2, 0.0)
 	_play_anim(&"ko_collapse", 1.1)
 	if SfxManager:

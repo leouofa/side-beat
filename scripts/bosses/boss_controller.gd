@@ -270,7 +270,8 @@ func _setup_chadzug_pattern(player: Node3D) -> void:
 			_current_move.aoe_corridor_box = Vector3(2.6, 2.2, 2.4)
 			_burrowed = true
 			_rig_root.visible = false
-			_hurtbox.monitorable = false
+			if _hurtbox:
+				_hurtbox.deactivate()
 			global_position.x = clampf(player.global_position.x, arena_x_min + 1.0, arena_x_max - 1.0)
 			global_position.z = clampf(player.global_position.z, CORRIDOR_Z_MIN + 0.4, CORRIDOR_Z_MAX - 0.4)
 			if HitstopManager:
@@ -780,7 +781,8 @@ func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 		if _state_timer >= 0.52 and _burrowed:
 			_burrowed = false
 			_rig_root.visible = true
-			_hurtbox.monitorable = true
+			if _hurtbox:
+				_hurtbox.activate()
 			velocity.y = 8.2
 			_play_anim(&"signature_special_2", 1.35)
 			if HitstopManager:
@@ -1176,7 +1178,7 @@ func _finish_boss_attack(cd: float) -> void:
 	if _rig_root:
 		_rig_root.visible = true
 	if _hurtbox:
-		_hurtbox.monitorable = true
+		_hurtbox.activate()
 	_deactivate_hitboxes()
 	_decision_cooldown = cd * (0.76 if phase >= 2 else 1.0)
 	_enter_state(&"pursue")
@@ -1233,7 +1235,8 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 		phase = 2
 		_burrowed = false
 		_rig_root.visible = true
-		_hurtbox.monitorable = true
+		if _hurtbox:
+			_hurtbox.activate()
 		_enter_state(&"phase_roar")
 		if boss_id == "lucifer" and SoundtrackManager:
 			SoundtrackManager.play_boss_theme(7, false, true, boss_name)
@@ -1247,7 +1250,7 @@ func _trigger_armor_break_stun(kb_vel: Vector3) -> void:
 	if _rig_root:
 		_rig_root.visible = true
 	if _hurtbox:
-		_hurtbox.monitorable = true
+		_hurtbox.activate()
 	_deactivate_hitboxes()
 	_state = &"stunned"
 	_state_timer = 0.0
@@ -1261,9 +1264,9 @@ func _die(dir_sign: float) -> void:
 	if _rig_root:
 		_rig_root.visible = true
 	_deactivate_hitboxes()
-	collision_layer = 0
+	set_deferred(&"collision_layer", 0)
 	if _hurtbox:
-		_hurtbox.monitorable = false
+		_hurtbox.deactivate()
 	velocity = Vector3(dir_sign * 4.5, 4.5, 0.0)
 	_play_anim(&"ko_collapse", 0.85)
 
