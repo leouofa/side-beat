@@ -279,6 +279,11 @@ func _handle_combat_and_locomotion(delta: float) -> void:
 	var prof := active_god()
 	var move_vec := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
+	# Update horizontal facing before actions so attacks, grabs, and jumps turn toward input direction
+	if absf(move_vec.x) > 0.12:
+		facing_sign = 1.0 if move_vec.x > 0.0 else -1.0
+		_update_facing_visual()
+
 	# Block / Parry handling (grounded & not currently mid-swing)
 	if _current_attack == null and is_on_floor() and Input.is_action_pressed("block_parry"):
 		is_blocking = true
@@ -323,10 +328,6 @@ func _handle_combat_and_locomotion(delta: float) -> void:
 	var accel := 42.0 * surface_friction_scale if is_on_floor() else 22.0
 	velocity.x = move_toward(velocity.x, target_vx, accel * delta)
 	velocity.z = move_toward(velocity.z, target_vz, accel * delta)
-
-	if absf(move_vec.x) > 0.12:
-		facing_sign = 1.0 if move_vec.x > 0.0 else -1.0
-		_update_facing_visual()
 
 	if not is_on_floor():
 		var grav_mult := 1.0
@@ -649,8 +650,9 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 
 func _update_facing_visual() -> void:
 	if _visual_pivot:
-		# Blender -Y -> Godot -Z: -PI/2 faces +X (Right), +PI/2 faces -X (Left)
-		_visual_pivot.rotation.y = -PI * 0.5 if facing_sign >= 0.0 else PI * 0.5
+		# glTF importer with Y-up maps Blender -Y (Front) to +Z.
+		# Godot rotation around +Y: +PI/2 faces +X (Right), -PI/2 faces -X (Left).
+		_visual_pivot.rotation.y = PI * 0.5 if facing_sign >= 0.0 else -PI * 0.5
 
 
 func _play_anim(anim_name: StringName, speed: float = 1.0) -> void:
