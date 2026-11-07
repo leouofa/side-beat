@@ -46,6 +46,7 @@ var _clear_panel: PanelContainer
 var _clear_details_label: Label
 var _clear_rank_label: Label
 var _next_stage_btn: Button
+var _replay_stage_btn: Button
 
 var _go_pulse_timer: float = 0.0
 var _callout_timer: float = 0.0
@@ -463,10 +464,10 @@ func _build_modal_overlays(root: Control) -> void:
 	_next_stage_btn.pressed.connect(func(): next_stage_requested.emit())
 	clv.add_child(_next_stage_btn)
 
-	var replay_btn := Button.new()
-	replay_btn.text = "RESTART CURRENT CITY"
-	replay_btn.pressed.connect(func(): restart_stage_requested.emit())
-	clv.add_child(replay_btn)
+	_replay_stage_btn = Button.new()
+	_replay_stage_btn.text = "RESTART CURRENT CITY"
+	_replay_stage_btn.pressed.connect(func(): restart_stage_requested.emit())
+	clv.add_child(_replay_stage_btn)
 
 
 func bind_player(ply: SharedSoulPlayer) -> void:
@@ -554,8 +555,12 @@ func show_stage_clear_summary(summary: Dictionary) -> void:
 	var max_impl := GameManager.max_implemented_stage if GameManager else 1
 	if cur_st < max_impl:
 		_next_stage_btn.text = "ADVANCE TO STAGE %d >>" % (cur_st + 1)
+		if is_instance_valid(_replay_stage_btn):
+			_replay_stage_btn.visible = true
 	else:
-		_next_stage_btn.text = "PLAY STAGE %d AGAIN (SCORE ATTACK)" % cur_st
+		_next_stage_btn.text = "COMPLETE TOUR & VIEW CREDITS"
+		if is_instance_valid(_replay_stage_btn):
+			_replay_stage_btn.visible = false
 	if SoundtrackManager:
 		SoundtrackManager.play_menu_track("stage_clear_victory", false)
 

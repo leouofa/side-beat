@@ -88,32 +88,32 @@ size_flags_vertical = 6
 theme_override_constants/separation = 12
 
 [node name="StartTourBtn" type="Button" parent="MarginContainer/VBoxContainer/MenuContainer"]
-custom_minimum_size = Vector2(360, 48)
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.84, 0, 1)
-theme_override_font_sizes/font_size = 20
-text = "1. START WORLD TOUR"
+theme_override_font_sizes/font_size = 16
+text = "START WORLD TOUR"
 
 [node name="LeaderboardBtn" type="Button" parent="MarginContainer/VBoxContainer/MenuContainer"]
 custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "2. TOP-10 LEADERBOARD"
+text = "TOP-10 LEADERBOARD"
 
 [node name="JukeboxBtn" type="Button" parent="MarginContainer/VBoxContainer/MenuContainer"]
 custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "3. 37-TRACK JUKEBOX"
+text = "JUKEBOX"
 
 [node name="HowToPlayBtn" type="Button" parent="MarginContainer/VBoxContainer/MenuContainer"]
 custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
-text = "4. HOW TO PLAY / CONTROLS"
+text = "HOW TO PLAY"
 
 [node name="QuitBtn" type="Button" parent="MarginContainer/VBoxContainer/MenuContainer"]
-custom_minimum_size = Vector2(360, 40)
+custom_minimum_size = Vector2(360, 44)
 layout_mode = 2
-theme_override_font_sizes/font_size = 14
-text = "5. QUIT TO DESKTOP"
+theme_override_font_sizes/font_size = 16
+text = "QUIT TO DESKTOP"
