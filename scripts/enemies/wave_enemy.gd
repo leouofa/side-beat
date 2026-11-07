@@ -72,6 +72,7 @@ var score_value: int = 250
 var facing_sign: float = -1.0
 var arena_x_min: float = -10000.0
 var arena_x_max: float = 10000.0
+var has_entered_arena: bool = true
 var flank_slot_offset: Vector3 = Vector3(1.3, 0.0, 0.0)
 
 var _visual_pivot: Node3D
@@ -243,6 +244,7 @@ func _physics_process(delta: float) -> void:
 			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
 			velocity.z = move_toward(velocity.z, 0.0, 24.0 * delta)
 		move_and_slide()
+		_clamp_corridor()
 		if _death_landed:
 			_death_ground_timer += delta
 			if _death_ground_timer >= 0.70:
@@ -250,6 +252,10 @@ func _physics_process(delta: float) -> void:
 		elif _death_safety_timer >= 3.0:
 			queue_free()
 		return
+
+	if not has_entered_arena:
+		if global_position.x >= arena_x_min and global_position.x <= arena_x_max:
+			has_entered_arena = true
 
 	if _attack_cooldown > 0.0:
 		_attack_cooldown -= delta
@@ -396,6 +402,7 @@ func on_parried(armor_shatter: float) -> void:
 func receive_hit(payload: Dictionary) -> Dictionary:
 	if _is_dead:
 		return {"connected": false}
+	has_entered_arena = true
 	var move: AttackData = payload.get("attack_data", null)
 	var dmg := float(payload.get("raw_damage", 35.0))
 	var armor_dmg := float(payload.get("armor_damage", 25.0))
@@ -444,9 +451,15 @@ func _check_wall_and_ground_bounces() -> void:
 		_wall_bounced = false
 		velocity.x = -velocity.x * 0.72
 		velocity.y = 6.2
+		if SfxManager:
+			SfxManager.play_3d("armor_break", global_position, 0.0, 0.08)
+		if HitstopManager:
+			HitstopManager.trigger_hitstop(5)
+			HitstopManager.trigger_camera_shake(0.35, 12.0)
 
 
 func _die(dir_sign: float) -> void:
+	has_entered_arena = true
 	_is_dead = true
 	_death_landed = false
 	_death_ground_timer = 0.0
@@ -480,4 +493,5 @@ func _play_anim(anim_name: StringName, speed: float = 1.0) -> void:
 
 func _clamp_corridor() -> void:
 	global_position.z = clampf(global_position.z, CORRIDOR_Z_MIN, CORRIDOR_Z_MAX)
-	global_position.x = clampf(global_position.x, arena_x_min, arena_x_max)
+	if has_entered_arena:
+		global_position.x = clampf(global_position.x, arena_x_min, arena_x_max)

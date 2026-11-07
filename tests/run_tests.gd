@@ -33,6 +33,7 @@ func _ready() -> void:
 	_test_save_persistence()
 	_test_combat_hurtbox_deferred_deactivation()
 	_test_simplified_controls_and_instruction_screens()
+	_test_battle_arena_on_screen_containment()
 
 	print("==============================================")
 	print("Assertions: %d | Failures: %d" % [_assertions, _failures])
@@ -712,4 +713,69 @@ func _test_simplified_controls_and_instruction_screens() -> void:
 	_assert(not pbody.text.to_lower().contains("left stick"), "Pause card does not contain 'left stick'")
 	_assert(not pbody.text.to_lower().contains("d-pad"), "Pause card does not contain 'd-pad'")
 	hud.queue_free()
+
+
+func _test_battle_arena_on_screen_containment() -> void:
+	var gen := ProceduralCityGenerator.new()
+	add_child(gen)
+	var stage_data := gen.generate_city_stage(1, 1337)
+	var zones: Array = stage_data.get("zones", [])
+	_assert(zones.size() == 5, "Battle arena containment test: stage 1 has 5 encounter zones")
+
+	var all_7m_half_width := true
+	for z in zones:
+		var c_x := float(z["center_x"])
+		var min_x := float(z["min_x"])
+		var max_x := float(z["max_x"])
+		if not is_equal_approx(min_x, c_x - 7.0) or not is_equal_approx(max_x, c_x + 7.0):
+			all_7m_half_width = false
+			printerr("Zone min/max mismatch: center=%.2f min=%.2f max=%.2f" % [c_x, min_x, max_x])
+	_assert(all_7m_half_width, "All locked battle zones have uniform 7.0m visible on-screen half-width")
+	gen.queue_free()
+
+	# Test WaveEnemy entrance and clamping
+	var enemy_scene := load("res://scenes/enemies/wave_enemy.tscn") as PackedScene
+	var enemy := enemy_scene.instantiate() as WaveEnemy
+	add_child(enemy)
+	enemy.arena_x_min = 29.0
+	enemy.arena_x_max = 43.0
+	enemy.has_entered_arena = false
+	enemy.global_position = Vector3(43.8, 0.15, 0.0)
+
+	# Before entering, _clamp_corridor does not clamp X
+	enemy._clamp_corridor()
+	_assert(is_equal_approx(enemy.global_position.x, 43.8), "WaveEnemy spawned 0.8m off-screen is not clamped before entering arena")
+
+	# Once crossed into bounds, has_entered_arena becomes true and clamps
+	enemy.global_position.x = 42.5
+	enemy._physics_process(0.016)
+	_assert(enemy.has_entered_arena, "WaveEnemy marks has_entered_arena = true once crossing within [min_x, max_x]")
+
+	# Subsequent attempt to go past max_x is clamped strictly
+	enemy.global_position.x = 45.0
+	enemy._clamp_corridor()
+	_assert(is_equal_approx(enemy.global_position.x, 43.0), "WaveEnemy is strictly clamped to arena_x_max once entered")
+
+	# WaveEnemy wall bounce at screen boundary
+	enemy.global_position.x = 42.8
+	enemy.velocity = Vector3(10.0, 0.0, 0.0)
+	enemy.set("_wall_bounced", true)
+	enemy._check_wall_and_ground_bounces()
+	_assert(enemy.velocity.x < 0.0 and enemy.velocity.y > 5.0, "WaveEnemy bounces off screen boundary with inverted X and vertical pop")
+	enemy.queue_free()
+
+	# Test Player arena bounds clamping
+	var ply_scene := load("res://scenes/player/shared_soul_player.tscn") as PackedScene
+	var ply := ply_scene.instantiate() as SharedSoulPlayer
+	add_child(ply)
+	ply.set_arena_x_bounds(29.0, 43.0)
+	ply.global_position = Vector3(20.0, 0.2, 0.0)
+	ply._clamp_corridor()
+	_assert(is_equal_approx(ply.global_position.x, 29.0), "Player cannot move past left battle arena boundary (clamped to 29.0)")
+
+	ply.global_position = Vector3(50.0, 0.2, 0.0)
+	ply._clamp_corridor()
+	_assert(is_equal_approx(ply.global_position.x, 43.0), "Player cannot move past right battle arena boundary (clamped to 43.0)")
+	ply.queue_free()
+
 

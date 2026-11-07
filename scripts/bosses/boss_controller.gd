@@ -152,6 +152,7 @@ func _physics_process(delta: float) -> void:
 			velocity.z = move_toward(velocity.z, 0.0, 14.0 * delta)
 		velocity.x = move_toward(velocity.x, 0.0, 14.0 * delta)
 		move_and_slide()
+		_clamp_corridor()
 		return
 
 	var speed_scale := 1.24 if phase >= 2 else 1.0

@@ -101,10 +101,12 @@ func _spawn_wave_enemy(tier: String) -> void:
 	var min_x := float(_active_zone["min_x"])
 	var max_x := float(_active_zone["max_x"])
 	var from_right := (_alive_count % 2 == 0)
-	var spawn_x := (max_x - 0.8) if from_right else (min_x + 0.8)
+	var spawn_offset := 0.8
+	var spawn_x := (max_x + spawn_offset) if from_right else (min_x - spawn_offset)
 	var spawn_z := randf_range(-2.4, 2.4)
 	enemy.arena_x_min = min_x
 	enemy.arena_x_max = max_x
+	enemy.has_entered_arena = false
 	enemy.flank_slot_offset = Vector3(0.0, 0.0, randf_range(-1.1, 1.1))
 	add_child(enemy)
 	enemy.global_position = Vector3(spawn_x, 0.15, spawn_z)
