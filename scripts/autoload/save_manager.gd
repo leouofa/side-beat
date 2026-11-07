@@ -23,6 +23,7 @@ func _active_path() -> String:
 func reset_to_defaults() -> void:
 	data = {
 		"version": 1,
+		"crt_preset": 1,
 		"highest_combo": 0,
 		"highest_resonance": "D",
 		"unlocked_max_stage": 1,

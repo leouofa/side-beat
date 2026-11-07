@@ -34,6 +34,7 @@ func _ready() -> void:
 	_test_combat_hurtbox_deferred_deactivation()
 	_test_simplified_controls_and_instruction_screens()
 	_test_battle_arena_on_screen_containment()
+	await _test_shader_effects_and_post_fx()
 
 	print("==============================================")
 	print("Assertions: %d | Failures: %d" % [_assertions, _failures])
@@ -784,5 +785,93 @@ func _test_battle_arena_on_screen_containment() -> void:
 	ply._clamp_corridor()
 	_assert(is_equal_approx(ply.global_position.x, 43.0), "Player cannot move past right battle arena boundary (clamped to 43.0)")
 	ply.queue_free()
+
+
+func _test_shader_effects_and_post_fx() -> void:
+	# 1. Verify all 6 new shader files load cleanly
+	var shader_paths := [
+		"res://shaders/arcade_post_fx.gdshader",
+		"res://shaders/fighter_surface_fx.gdshader",
+		"res://shaders/fighter_ko_dissolve.gdshader",
+		"res://shaders/combat_hit_slash.gdshader",
+		"res://shaders/energy_shockwave.gdshader",
+		"res://shaders/danger_telegraph.gdshader",
+		"res://shaders/wet_neon_asphalt.gdshader",
+		"res://shaders/skyline_cyber_rim.gdshader",
+	]
+	for sp in shader_paths:
+		var sh := load(sp) as Shader
+		_assert(sh != null, "Shader loads and compiles cleanly: %s" % sp)
+
+	# 2. Verify PostFxManager autoload, CRT preset cycling, and dynamic triggers
+	_assert(PostFxManager != null, "PostFxManager autoload is active")
+	PostFxManager.set_crt_preset(PostFxManager.CrtPreset.CRISP_ARCADE, false)
+	_assert(PostFxManager.current_preset == 1 and PostFxManager.get_preset_label() == "CRISP ARCADE", "Default CRT preset is CRISP ARCADE")
+	PostFxManager.cycle_crt_preset()
+	_assert(PostFxManager.current_preset == 2 and PostFxManager.get_preset_label() == "HEAVY RETRO CRT", "Cycled CRT preset to HEAVY RETRO CRT")
+	PostFxManager.cycle_crt_preset()
+	_assert(PostFxManager.current_preset == 0 and PostFxManager.get_preset_label() == "OFF", "Cycled CRT preset to OFF")
+	PostFxManager.cycle_crt_preset()
+	_assert(PostFxManager.current_preset == 1, "Cycled CRT preset back to CRISP ARCADE")
+
+	PostFxManager.trigger_morph_glitch(Color("#00D4FF"), 0.65, 0.20)
+	_assert(PostFxManager.get("_glitch_intensity") > 0.5, "trigger_morph_glitch activates screen-space glitch intensity")
+	PostFxManager.trigger_parry_or_super_impact(Vector3.ZERO, Color("#FFE066"), true)
+	_assert(PostFxManager.get("_impact_flash") > 0.7 and PostFxManager.get("_ripple_progress") < 1.0, "trigger_parry_or_super_impact activates radial shockwave ripple and impact flash")
+
+	# 3. Verify FighterShaderHelper on Player, WaveEnemy, and BossController
+	var ply_scene := load("res://scenes/player/shared_soul_player.tscn") as PackedScene
+	var ply := ply_scene.instantiate() as SharedSoulPlayer
+	add_child(ply)
+	var god_rigs: Array = ply.get("_god_rigs")
+	_assert(god_rigs.size() == 4 and god_rigs[0].get("fx_mat") is ShaderMaterial, "SharedSoulPlayer attaches fighter_surface_fx ShaderMaterial to all 4 God rigs")
+	ply.free()
+
+	var enemy := WaveEnemy.new()
+	add_child(enemy)
+	enemy.configure_tier("bruiser")
+	var e_fx := enemy.get("_fx_mat") as ShaderMaterial
+	_assert(e_fx != null and is_equal_approx(float(e_fx.get_shader_parameter("armor_ratio")), 1.0), "Bruiser WaveEnemy initializes surface FX shader with super-armor pulse")
+	enemy.receive_hit({"raw_damage": 30.0, "armor_damage": 10.0, "facing_sign": 1.0, "spark_color": Color("#00D4FF")})
+	_assert(float(e_fx.get_shader_parameter("hit_flash_amount")) > 0.0, "WaveEnemy triggers surface hit-flash on strike")
+	enemy.receive_hit({"raw_damage": 999.0, "facing_sign": 1.0})
+	_assert(enemy.get("_dissolve_mat") is ShaderMaterial, "WaveEnemy triggers neon voxel KO dissolve shader on defeat")
+	enemy.free()
+
+	var boss := BossController.new()
+	add_child(boss)
+	boss.setup_boss("chadzug", 0.0, 20.0)
+	var b_fx := boss.get("_fx_mat") as ShaderMaterial
+	_assert(b_fx != null and is_equal_approx(float(b_fx.get_shader_parameter("armor_ratio")), 1.0), "BossController initializes surface FX shader with active super-armor rim")
+	boss.receive_hit({"raw_damage": 700.0, "armor_damage": 50.0, "facing_sign": 1.0})
+	_assert(boss.phase == 2 and is_equal_approx(float(b_fx.get_shader_parameter("enrage_factor")), 1.0), "BossController Phase 2 shift activates crimson enrage shader strobe")
+	boss._enter_state(&"pursue")
+	boss.receive_hit({"raw_damage": 9999.0, "facing_sign": 1.0})
+	_assert(boss.get("_dissolve_mat") is ShaderMaterial, "BossController triggers neon voxel KO dissolve shader on defeat")
+	boss.free()
+
+	# 4. Verify HitstopManager shader VFX and ProceduralCityGenerator stage shaders
+	var vfx_holder := Node3D.new()
+	add_child(vfx_holder)
+	HitstopManager.register_vfx_root(vfx_holder)
+	HitstopManager.spawn_hit_spark(Vector3.ZERO, Color("#00D4FF"), 1.0)
+	HitstopManager.spawn_shockwave_ring(Vector3.ZERO, Color("#FFE066"), 3.0, 0.25)
+	HitstopManager.spawn_lightning_pillar(Vector3.ZERO, Color("#00D4FF"), 5.0, 0.5)
+	var tele := HitstopManager.spawn_ground_telegraph(Vector3.ZERO, Vector2(2.0, 2.0), 0.35)
+	_assert(tele != null and tele.material_override is ShaderMaterial, "HitstopManager ground telegraph uses danger_telegraph ShaderMaterial")
+	vfx_holder.free()
+
+	var gen := ProceduralCityGenerator.new()
+	add_child(gen)
+	gen.generate_city_stage(1, 1337)
+	var chunk0 := gen.get_node_or_null("Chunk_0")
+	var road_mesh := chunk0.get_node_or_null("RoadMesh") as MeshInstance3D if chunk0 else null
+	var tower_mesh := chunk0.get_node_or_null("SkylineTower_0") as MeshInstance3D if chunk0 else null
+	_assert(road_mesh != null and road_mesh.material_override is ShaderMaterial, "ProceduralCityGenerator road uses wet_neon_asphalt ShaderMaterial")
+	_assert(tower_mesh != null and tower_mesh.material_override is ShaderMaterial, "ProceduralCityGenerator skyline tower uses skyline_cyber_rim ShaderMaterial")
+	gen.free()
+	await get_tree().process_frame
+	await get_tree().process_frame
+
 
 

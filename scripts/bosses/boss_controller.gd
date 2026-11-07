@@ -10,6 +10,7 @@ signal boss_defeated(boss_id: String, score_value: int, world_pos: Vector3)
 const CORRIDOR_Z_MIN := -3.2
 const CORRIDOR_Z_MAX := 3.2
 const GRAVITY := 26.0
+const FighterShaderHelper := preload("res://scripts/utils/fighter_shader_helper.gd")
 
 var boss_id: String = "chadzug"
 var boss_name: String = "Chadzug"
@@ -35,6 +36,8 @@ var _anim: AnimationPlayer
 var _hurtbox: HurtBox3D
 var _aoe_hitbox: HitBox3D
 var _socket_hitboxes: Array[HitBox3D] = []
+var _fx_mat: ShaderMaterial = null
+var _dissolve_mat: ShaderMaterial = null
 
 var _state: StringName = &"intro"
 var _state_timer: float = 0.0
@@ -115,6 +118,7 @@ func setup_boss(id: String, min_x: float, max_x: float) -> void:
 	var h_size: Vector3 = cfg["hurtbox_size"]
 	_hurtbox.setup(self, false, h_size, h_size.y * 0.5)
 
+	_fx_mat = FighterShaderHelper.attach_surface_fx(_rig_root, accent_color, 1.05, 1.0)
 	_update_facing_visual()
 	_enter_state(&"intro")
 	boss_hp_updated.emit(hp, max_hp, armor, max_armor)
@@ -133,6 +137,9 @@ func _enter_state(new_state: StringName) -> void:
 				SfxManager.play_2d("boss_warning", -1.5, 0.02)
 		&"phase_roar":
 			armor = max_armor
+			FighterShaderHelper.update_armor_and_enrage(_fx_mat, armor, max_armor, phase >= 2)
+			if PostFxManager:
+				PostFxManager.trigger_boss_phase_glitch(accent_color, 0.92, 0.42)
 			_play_anim(&"phase_2_roar", 1.1)
 			if HitstopManager:
 				HitstopManager.spawn_shockwave_ring(global_position, accent_color, 5.2, 0.42)
@@ -173,6 +180,7 @@ func _physics_process(delta: float) -> void:
 				velocity.z = move_toward(velocity.z, 0.0, 16.0 * delta)
 			if _state_timer >= 0.72:
 				armor = max_armor
+				FighterShaderHelper.update_armor_and_enrage(_fx_mat, armor, max_armor, phase >= 2)
 				boss_hp_updated.emit(hp, max_hp, armor, max_armor)
 				_enter_state(&"pursue")
 		&"pursue":
@@ -1215,6 +1223,8 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 	var dir_sign := float(payload.get("facing_sign", 1.0))
 
 	hp = maxf(0.0, hp - dmg)
+	var flash_col: Color = payload.get("spark_color", Color("#FFE066"))
+	FighterShaderHelper.trigger_hit_flash(self, _fx_mat, flash_col.lightened(0.35), 0.12)
 	if armor > 0.0:
 		armor = maxf(0.0, armor - armor_dmg)
 		if armor <= 0.0:
@@ -1228,6 +1238,7 @@ func receive_hit(payload: Dictionary) -> Dictionary:
 			velocity.y = maxf(kb.y * 0.78, 6.2)
 			_play_anim(&"hit_launch_arc", 1.05)
 
+	FighterShaderHelper.update_armor_and_enrage(_fx_mat, armor, max_armor, phase >= 2)
 	boss_hp_updated.emit(hp, max_hp, armor, max_armor)
 
 	if hp <= 0.0:
@@ -1273,6 +1284,9 @@ func _die(dir_sign: float) -> void:
 		_hurtbox.deactivate()
 	velocity = Vector3(dir_sign * 4.5, 4.5, 0.0)
 	_play_anim(&"ko_collapse", 0.85)
+	_dissolve_mat = FighterShaderHelper.trigger_ko_dissolve(self, _rig_root, accent_color, 1.25)
+	if PostFxManager:
+		PostFxManager.trigger_boss_phase_glitch(accent_color, 1.0, 0.50)
 
 	if SfxManager:
 		SfxManager.play_2d("ko_boom", 2.0, 0.0)
