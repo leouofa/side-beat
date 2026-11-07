@@ -88,12 +88,12 @@ const BOSSES := {
 		"counter_hint": "COUNTER: Clear fly swarms & leech HP with Osiris Soul Harvest!",
 	},
 	"baba": {
-		"id": "baba", "name": "Baba", "title": "Stalker of the Fogged Spire",
-		"domain": "Long-Headed Bird God", "tier": "Mid-Boss", "stage": 5, "city": "London",
+		"id": "baba", "name": "Baba", "title": "Crone of the Mortar & Pestle",
+		"domain": "Crone God", "tier": "Mid-Boss", "stage": 5, "city": "London",
 		"glb": "res://assets/bosses/baba.glb", "max_hp": 1750.0, "max_armor": 200.0, "move_speed": 5.8,
 		"hurtbox_size": Vector3(1.0, 2.4, 1.0), "score": 6000, "accent_color": Color("#9B59B6"),
-		"sockets": ["spear_beak_tip", "foot.R"],
-		"counter_hint": "COUNTER: Parry beak thrusts with Ir or armor through with Endor!",
+		"sockets": ["pestle_staff", "foot.R"],
+		"counter_hint": "COUNTER: Parry pestle strikes with Ir or armor through with Endor!",
 	},
 	"devil": {
 		"id": "devil", "name": "Devil", "title": "The Crossroads Tempter",

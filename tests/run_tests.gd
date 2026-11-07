@@ -20,9 +20,11 @@ func _ready() -> void:
 	_test_37_soundtracks_and_sfx()
 	_test_glb_rigs_and_nla_clips()
 	_test_m2_bosses_and_drone()
+	_test_m3_bosses()
 	_test_resonance_math()
 	await _test_stage_1_runtime_and_morph_preservation()
 	_test_stages_2_to_4_generation()
+	_test_stages_5_to_7_generation()
 	_test_hitstop_manager_camera_shake()
 	_test_save_persistence()
 
@@ -154,6 +156,32 @@ func _test_m2_bosses_and_drone() -> void:
 	drone.free()
 
 
+func _test_m3_bosses() -> void:
+	# Baba
+	var baba := GlbLoader.instantiate_glb("res://assets/bosses/baba.glb")
+	var bb_skel := GlbLoader.find_skeleton(baba)
+	_assert(bb_skel != null and bb_skel.find_bone("mortar_base") >= 0 and bb_skel.find_bone("pestle_staff") >= 0 and bb_skel.find_bone("claw_toe.L") >= 0, "Baba GLB has mortar_base, pestle_staff, and chicken claw bones")
+	baba.free()
+
+	# Devil
+	var devil := GlbLoader.instantiate_glb("res://assets/bosses/devil.glb")
+	var dv_skel := GlbLoader.find_skeleton(devil)
+	_assert(dv_skel != null and dv_skel.find_bone("horn.L") >= 0 and dv_skel.find_bone("wing_bat.L") >= 0 and dv_skel.find_bone("tail_03") >= 0 and dv_skel.find_bone("pitchfork") >= 0, "Devil GLB has demon horn.L, bat wings, barbed tail, and golden pitchfork")
+	devil.free()
+
+	# Satan
+	var satan := GlbLoader.instantiate_glb("res://assets/bosses/satan.glb")
+	var st_skel := GlbLoader.find_skeleton(satan)
+	_assert(st_skel != null and st_skel.find_bone("horn_jagged.L") >= 0 and st_skel.find_bone("plasma_claw.L") >= 0 and st_skel.find_bone("dorsal_fin.01") >= 0, "Satan GLB has jagged thunder horns, plasma claws, and dorsal conductor fins")
+	satan.free()
+
+	# Lucifer
+	var luci := GlbLoader.instantiate_glb("res://assets/bosses/lucifer.glb")
+	var lc_skel := GlbLoader.find_skeleton(luci)
+	_assert(lc_skel != null and lc_skel.find_bone("halo") >= 0 and lc_skel.find_bone("seraph_upper.L") >= 0 and lc_skel.find_bone("seraph_lower.R") >= 0 and lc_skel.find_bone("celestial_blade") >= 0, "Lucifer GLB has radiant halo, 6 Seraphic wings, and celestial blade")
+	luci.free()
+
+
 func _test_resonance_math() -> void:
 	var rt := ResonanceTracker.new()
 	var r1 := rt.register_hit("endor")
@@ -227,7 +255,7 @@ func _test_stage_1_runtime_and_morph_preservation() -> void:
 
 
 func _test_stages_2_to_4_generation() -> void:
-	_assert(GameManager.max_implemented_stage == 4, "GameManager.max_implemented_stage is 4 for Milestone 2")
+	_assert(GameManager.max_implemented_stage >= 4, "GameManager.max_implemented_stage is at least 4")
 
 	var gen := ProceduralCityGenerator.new()
 	add_child(gen)
@@ -253,6 +281,37 @@ func _test_stages_2_to_4_generation() -> void:
 	_assert(String(gen.generated_zones[2].get("boss_id", "")) == "andruas", "Stage 4 has mid-boss Andruas")
 	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "beezelbub", "Stage 4 has stage-boss Beezelbub")
 	_assert(String(CityStageCatalog.STAGES[4]["hazard"]) == "ice_slick", "Stage 4 features ice_slick hazard")
+
+	gen.free()
+
+
+func _test_stages_5_to_7_generation() -> void:
+	_assert(GameManager.max_implemented_stage == 7, "GameManager.max_implemented_stage is 7 for Milestone 3")
+
+	var gen := ProceduralCityGenerator.new()
+	add_child(gen)
+
+	# Stage 5: London (Baba mid-boss, Devil stage-boss)
+	var st5 := gen.generate_city_stage(5, 5001)
+	_assert(gen.generated_zones.size() == 5, "Stage 5 (London) generated 5 encounter zones")
+	_assert(String(st5.get("city", "")) == "London", "Stage 5 city is London")
+	_assert(String(gen.generated_zones[2].get("boss_id", "")) == "baba", "Stage 5 has mid-boss Baba")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "devil", "Stage 5 has stage-boss Devil")
+	_assert(String(CityStageCatalog.STAGES[5]["hazard"]) == "steam_vent", "Stage 5 features steam_vent hazard")
+
+	# Stage 6: Tokyo (Satan stage-boss, electric_arc hazard)
+	var st6 := gen.generate_city_stage(6, 6001)
+	_assert(gen.generated_zones.size() == 5, "Stage 6 (Tokyo) generated 5 encounter zones")
+	_assert(String(st6.get("city", "")) == "Tokyo", "Stage 6 city is Tokyo")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "satan", "Stage 6 has stage-boss Satan")
+	_assert(String(CityStageCatalog.STAGES[6]["hazard"]) == "electric_arc", "Stage 6 features electric_arc hazard")
+
+	# Stage 7: Rome (Lucifer final boss, lava_brazier hazard)
+	var st7 := gen.generate_city_stage(7, 7001)
+	_assert(gen.generated_zones.size() == 5, "Stage 7 (Rome) generated 5 encounter zones")
+	_assert(String(st7.get("city", "")) == "Rome", "Stage 7 city is Rome")
+	_assert(String(gen.generated_zones[4].get("boss_id", "")) == "lucifer", "Stage 7 has stage-boss Lucifer")
+	_assert(String(CityStageCatalog.STAGES[7]["hazard"]) == "lava_brazier", "Stage 7 features lava_brazier hazard")
 
 	gen.free()
 
