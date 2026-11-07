@@ -136,9 +136,13 @@ func _test_stage_1_runtime_and_morph_preservation() -> void:
 	_assert(is_equal_approx(gen.total_stage_length_m, 168.0) and gen.generated_zones.size() == 5, "NYC stage generated 7 x 24m chunks with 3 street waves + Chadzug + Beebo")
 
 	var playing_before: String = SoundtrackManager.get_current_track_path()
+	_assert(is_equal_approx(ply.facing_sign, 1.0) and is_equal_approx(ply.get("_visual_pivot").rotation.y, PI * 0.5), "Player spawns facing right (+X) with visual rotation +PI/2")
+
 	ply.global_position = Vector3(12.0, 2.5, -1.4)
 	ply.velocity = Vector3(6.4, 4.8, -0.9)
 	ply.facing_sign = -1.0
+	ply._update_facing_visual()
+	_assert(is_equal_approx(ply.get("_visual_pivot").rotation.y, -PI * 0.5), "Player visual rotation correctly updates to -PI/2 when facing left (-X)")
 	ply.resonance.register_hit("endor")
 
 	# Zero-cooldown rapid morph across all 4 gods in the same frame!
@@ -148,6 +152,7 @@ func _test_stage_1_runtime_and_morph_preservation() -> void:
 	_assert(m1 and m2 and m3, "Zero-cooldown Shared-Soul Morphing succeeds across all 4 gods instantaneously")
 	_assert(ply.velocity.is_equal_approx(Vector3(6.4, 4.8, -0.9)), "Morph preserves linear velocity")
 	_assert(is_equal_approx(ply.facing_sign, -1.0), "Morph preserves left/right facing direction")
+	_assert(is_equal_approx(ply.get("_visual_pivot").rotation.y, -PI * 0.5), "Morph preserves left/right visual rotation")
 	_assert(ply.resonance.combo_count == 1, "Morph preserves active combo count")
 	_assert(ply.hitstun_immunity_frames == 2, "Morph grants 2 frames of hitstun immunity")
 	_assert(SoundtrackManager.get_current_track_path() == playing_before, "Morph does NOT chop or restart active music track")

@@ -115,6 +115,7 @@ func setup_boss(id: String, min_x: float, max_x: float) -> void:
 	var h_size: Vector3 = cfg["hurtbox_size"]
 	_hurtbox.setup(self, false, h_size, h_size.y * 0.5)
 
+	_update_facing_visual()
 	_enter_state(&"intro")
 	boss_hp_updated.emit(hp, max_hp, armor, max_armor)
 
@@ -187,7 +188,7 @@ func _tick_pursue(delta: float, speed_scale: float) -> void:
 
 	var to_ply := player.global_position - global_position
 	facing_sign = 1.0 if to_ply.x >= 0.0 else -1.0
-	_visual_pivot.rotation.y = -PI * 0.5 if facing_sign >= 0.0 else PI * 0.5
+	_update_facing_visual()
 
 	_decision_cooldown -= delta * speed_scale
 	if _decision_cooldown <= 0.0:
@@ -219,7 +220,7 @@ func _choose_next_boss_attack(player: Node3D) -> void:
 
 	var to_ply := player.global_position - global_position
 	facing_sign = 1.0 if to_ply.x >= 0.0 else -1.0
-	_visual_pivot.rotation.y = -PI * 0.5 if facing_sign >= 0.0 else PI * 0.5
+	_update_facing_visual()
 
 	if boss_id == "chadzug":
 		_setup_chadzug_pattern(player)
@@ -353,7 +354,7 @@ func _tick_signature_attack(delta: float, _speed_scale: float) -> void:
 		if (global_position.x <= arena_x_min + 0.6 and velocity.x < 0.0) or (global_position.x >= arena_x_max - 0.6 and velocity.x > 0.0):
 			velocity.x = -velocity.x
 			facing_sign = signf(velocity.x)
-			_visual_pivot.rotation.y = -PI * 0.5 if facing_sign >= 0.0 else PI * 0.5
+			_update_facing_visual()
 		if _state_timer >= 0.22 and _state_timer < 0.78:
 			_activate_aoe(Vector3(facing_sign * 0.6, 0.7, 0.0))
 		else:
@@ -539,6 +540,11 @@ func _die(dir_sign: float) -> void:
 	var tw := create_tween()
 	tw.tween_interval(1.4)
 	tw.tween_callback(queue_free)
+
+
+func _update_facing_visual() -> void:
+	if _visual_pivot:
+		_visual_pivot.rotation.y = PI * 0.5 if facing_sign >= 0.0 else -PI * 0.5
 
 
 func _play_anim(anim_name: StringName, speed: float = 1.0) -> void:

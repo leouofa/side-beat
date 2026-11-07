@@ -112,6 +112,7 @@ func _ready() -> void:
 	_enemy_move = AttackData.new()
 	_build_overhead_hp_bar()
 	configure_tier(tier_id)
+	_update_facing_visual()
 
 
 func configure_tier(new_tier: String, city_tint: Color = Color.WHITE) -> void:
@@ -268,7 +269,7 @@ func _tick_ai_pursuit(delta: float) -> void:
 
 	var to_ply := player.global_position - global_position
 	facing_sign = 1.0 if to_ply.x >= 0.0 else -1.0
-	_visual_pivot.rotation.y = -PI * 0.5 if facing_sign >= 0.0 else PI * 0.5
+	_update_facing_visual()
 
 	var desired_dist_x := 4.8 if tier_id == "cult_elite" else 1.35
 	var target_pos := Vector3(
@@ -473,6 +474,11 @@ func _die(dir_sign: float) -> void:
 	var tw := create_tween()
 	tw.tween_interval(0.95)
 	tw.tween_callback(queue_free)
+
+
+func _update_facing_visual() -> void:
+	if _visual_pivot:
+		_visual_pivot.rotation.y = PI * 0.5 if facing_sign >= 0.0 else -PI * 0.5
 
 
 func _play_anim(anim_name: StringName, speed: float = 1.0) -> void:
