@@ -70,15 +70,23 @@ const GOD_INFO := [
 @onready var _god_title_label: Label = $MarginContainer/VBoxContainer/DetailPanel/VBoxContainer/GodTitle
 @onready var _god_desc_label: RichTextLabel = $MarginContainer/VBoxContainer/DetailPanel/VBoxContainer/GodDesc
 @onready var _god_stats_label: Label = $MarginContainer/VBoxContainer/DetailPanel/VBoxContainer/GodStats
+@onready var _detail_panel: PanelContainer = $MarginContainer/VBoxContainer/DetailPanel
 @onready var _stage_select_btn: OptionButton = $MarginContainer/VBoxContainer/BottomRow/StageSelectBtn
 @onready var _start_btn: Button = $MarginContainer/VBoxContainer/BottomRow/StartTourBtn
 @onready var _back_btn: Button = $MarginContainer/VBoxContainer/Header/BackBtn
 
 var _selected_slot: int = 0
+var _hovered_slot: int = -1
 var _card_panels: Array[PanelContainer] = []
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
+	_detail_panel.add_theme_stylebox_override(
+		"panel",
+		SynthwaveUI.make_card_style(SynthwaveUI.COLOR_CARD_BG, Color("#00D4FF"), 2, 8, Color(0, 0.8, 1.0, 0.25), 6)
+	)
+
 	_setup_god_cards()
 	_setup_stage_selector()
 	_update_selection()
@@ -94,19 +102,24 @@ func _setup_god_cards() -> void:
 	_card_panels.clear()
 
 	for i in range(GOD_INFO.size()):
+		var slot_idx := i
 		var info: Dictionary = GOD_INFO[i]
 		var card := PanelContainer.new()
 		card.custom_minimum_size = Vector2(240, 220)
 		card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		card.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+		card.mouse_filter = Control.MOUSE_FILTER_STOP
 
 		var vbox := VBoxContainer.new()
 		vbox.alignment = BoxContainer.ALIGNMENT_CENTER
 		vbox.add_theme_constant_override("separation", 8)
+		vbox.mouse_filter = Control.MOUSE_FILTER_PASS
 
 		var img := TextureRect.new()
 		img.custom_minimum_size = Vector2(160, 140)
 		img.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		img.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		img.mouse_filter = Control.MOUSE_FILTER_PASS
 		var p_path: String = info["preview"]
 		if ResourceLoader.exists(p_path):
 			img.texture = load(p_path)
@@ -117,6 +130,7 @@ func _setup_god_cards() -> void:
 		name_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		name_lbl.add_theme_color_override("font_color", info["color"])
 		name_lbl.add_theme_font_size_override("font_size", 18)
+		name_lbl.mouse_filter = Control.MOUSE_FILTER_PASS
 		vbox.add_child(name_lbl)
 
 		var arche_lbl := Label.new()
@@ -124,9 +138,31 @@ func _setup_god_cards() -> void:
 		arche_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		arche_lbl.add_theme_color_override("font_color", Color(0.7, 0.75, 0.85))
 		arche_lbl.add_theme_font_size_override("font_size", 12)
+		arche_lbl.mouse_filter = Control.MOUSE_FILTER_PASS
 		vbox.add_child(arche_lbl)
 
 		card.add_child(vbox)
+
+		card.mouse_entered.connect(func():
+			_hovered_slot = slot_idx
+			_update_card_style(slot_idx)
+			if SfxManager:
+				SfxManager.play_2d("ui_move")
+		)
+		card.mouse_exited.connect(func():
+			if _hovered_slot == slot_idx:
+				_hovered_slot = -1
+				_update_card_style(slot_idx)
+		)
+		card.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+				if _selected_slot != slot_idx:
+					_selected_slot = slot_idx
+					_update_selection()
+					if SfxManager:
+						SfxManager.play_2d("ui_confirm")
+		)
+
 		_god_cards_container.add_child(card)
 		_card_panels.append(card)
 
@@ -148,13 +184,50 @@ func _setup_stage_selector() -> void:
 	_stage_select_btn.selected = 0
 
 
+func _update_card_style(slot: int) -> void:
+	if slot < 0 or slot >= _card_panels.size():
+		return
+	var card := _card_panels[slot]
+	var info: Dictionary = GOD_INFO[slot]
+	var is_selected := (slot == _selected_slot)
+	var is_hovered := (slot == _hovered_slot)
+
+	if is_selected:
+		card.modulate = Color(1.2, 1.2, 1.2)
+		var sel_color: Color = info["color"]
+		card.add_theme_stylebox_override(
+			"panel",
+			SynthwaveUI.make_card_style(
+				Color("#180F30"),
+				sel_color,
+				3,
+				8,
+				Color(sel_color.r, sel_color.g, sel_color.b, 0.65),
+				10
+			)
+		)
+	elif is_hovered:
+		card.modulate = Color(1.1, 1.1, 1.1)
+		card.add_theme_stylebox_override(
+			"panel",
+			SynthwaveUI.make_card_hover_style(SynthwaveUI.COLOR_GLOW_HOVER)
+		)
+	else:
+		card.modulate = Color(0.75, 0.75, 0.75)
+		card.add_theme_stylebox_override(
+			"panel",
+			SynthwaveUI.make_card_style(
+				SynthwaveUI.COLOR_CARD_BG,
+				SynthwaveUI.COLOR_CARD_BORDER,
+				2,
+				8
+			)
+		)
+
+
 func _update_selection() -> void:
 	for i in range(_card_panels.size()):
-		var card := _card_panels[i]
-		if i == _selected_slot:
-			card.modulate = Color(1.2, 1.2, 1.2)
-		else:
-			card.modulate = Color(0.65, 0.65, 0.65)
+		_update_card_style(i)
 
 	var info: Dictionary = GOD_INFO[_selected_slot]
 	_god_name_label.text = "%s — %s" % [info["name"], info["pantheon"]]

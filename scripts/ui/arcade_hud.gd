@@ -350,7 +350,10 @@ func _build_modal_overlays(root: Control) -> void:
 	_pause_panel.position = Vector2(-270, -185)
 	_pause_panel.custom_minimum_size = Vector2(540, 370)
 	_pause_panel.visible = false
-	_pause_panel.add_theme_stylebox_override("panel", _make_box_style(Color(0.04, 0.05, 0.10, 0.96), Color("#00D4FF"), 3, 8))
+	_pause_panel.add_theme_stylebox_override(
+		"panel",
+		SynthwaveUI.make_card_style(SynthwaveUI.COLOR_CARD_BG, Color("#00D4FF"), 3, 8, Color(0, 0.83, 1, 0.4), 8)
+	)
 	root.add_child(_pause_panel)
 
 	var pv := VBoxContainer.new()
@@ -382,11 +385,13 @@ func _build_modal_overlays(root: Control) -> void:
 
 	var resume_btn := Button.new()
 	resume_btn.text = "RESUME BRAWL (ESC)"
+	SynthwaveUI.apply_button_style(resume_btn)
 	resume_btn.pressed.connect(_toggle_pause)
 	pv.add_child(resume_btn)
 
 	var restart_btn := Button.new()
 	restart_btn.text = "RESTART CITY STAGE"
+	SynthwaveUI.apply_button_style(restart_btn)
 	restart_btn.pressed.connect(func():
 		_set_paused(false)
 		restart_stage_requested.emit()
@@ -399,7 +404,10 @@ func _build_modal_overlays(root: Control) -> void:
 	_continue_panel.position = Vector2(-230, -130)
 	_continue_panel.custom_minimum_size = Vector2(460, 250)
 	_continue_panel.visible = false
-	_continue_panel.add_theme_stylebox_override("panel", _make_box_style(Color(0.09, 0.03, 0.06, 0.96), Color("#FF1E42"), 3, 8))
+	_continue_panel.add_theme_stylebox_override(
+		"panel",
+		SynthwaveUI.make_card_style(Color(0.08, 0.03, 0.08, 0.96), Color("#FF007F"), 3, 8, Color(1, 0, 0.5, 0.5), 10)
+	)
 	root.add_child(_continue_panel)
 
 	var cv := VBoxContainer.new()
@@ -423,6 +431,7 @@ func _build_modal_overlays(root: Control) -> void:
 
 	var cont_btn := Button.new()
 	cont_btn.text = "INSERT CREDIT & REVIVE [SPACE / J]"
+	SynthwaveUI.apply_button_style(cont_btn)
 	cont_btn.pressed.connect(_accept_continue)
 	cv.add_child(cont_btn)
 
@@ -432,7 +441,10 @@ func _build_modal_overlays(root: Control) -> void:
 	_clear_panel.position = Vector2(-260, -175)
 	_clear_panel.custom_minimum_size = Vector2(520, 350)
 	_clear_panel.visible = false
-	_clear_panel.add_theme_stylebox_override("panel", _make_box_style(Color(0.04, 0.07, 0.12, 0.96), Color("#FFD700"), 3, 8))
+	_clear_panel.add_theme_stylebox_override(
+		"panel",
+		SynthwaveUI.make_card_style(SynthwaveUI.COLOR_CARD_BG, Color("#FFD700"), 3, 8, Color(1, 0.84, 0, 0.5), 10)
+	)
 	root.add_child(_clear_panel)
 
 	var clv := VBoxContainer.new()
@@ -461,11 +473,13 @@ func _build_modal_overlays(root: Control) -> void:
 
 	_next_stage_btn = Button.new()
 	_next_stage_btn.text = "REPLAY STAGE FOR HIGHER RANK"
+	SynthwaveUI.apply_button_style(_next_stage_btn)
 	_next_stage_btn.pressed.connect(func(): next_stage_requested.emit())
 	clv.add_child(_next_stage_btn)
 
 	_replay_stage_btn = Button.new()
 	_replay_stage_btn.text = "RESTART CURRENT CITY"
+	SynthwaveUI.apply_button_style(_replay_stage_btn)
 	_replay_stage_btn.pressed.connect(func(): restart_stage_requested.emit())
 	clv.add_child(_replay_stage_btn)
 

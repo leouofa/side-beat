@@ -21,6 +21,7 @@ var _vis_timer: float = 0.0
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
 	if SoundtrackManager:
 		_all_tracks = SoundtrackManager.get_all_37_tracks()
 

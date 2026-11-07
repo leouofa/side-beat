@@ -7,6 +7,7 @@ extends Control
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
 	_back_btn.pressed.connect(_on_back_pressed)
 	_populate_leaderboard()
 

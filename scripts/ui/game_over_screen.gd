@@ -18,6 +18,7 @@ var _qualifies: bool = false
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
 	var final_score := GameManager.run_score if GameManager else 25000
 	_score_label.text = "FINAL SCORE: %07d" % final_score
 
