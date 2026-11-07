@@ -10,14 +10,41 @@ config_version=5
 
 [application]
 
-config/name="side-beat"
+config/name="Side Beat"
+run/main_scene="res://scenes/main/boot.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
+
+[autoload]
+
+InputBinder="*res://scripts/autoload/input_binder.gd"
+SaveManager="*res://scripts/autoload/save_manager.gd"
+SoundtrackManager="*res://scripts/autoload/soundtrack_manager.gd"
+SfxManager="*res://scripts/autoload/sfx_manager.gd"
+HitstopManager="*res://scripts/autoload/hitstop_manager.gd"
+GameManager="*res://scripts/autoload/game_manager.gd"
+
 [display]
 
+window/size/viewport_width=1280
+window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[layer_names]
+
+3d_physics/layer_1="WorldBounds"
+3d_physics/layer_2="PlayerBody"
+3d_physics/layer_3="EnemyBody"
+3d_physics/layer_4="PlayerHitHurt"
+3d_physics/layer_5="EnemyHitHurt"
+3d_physics/layer_6="DestructibleProp"
+3d_physics/layer_7="Pickup"
+3d_physics/layer_8="HazardZone"
 
 [physics]
 
@@ -26,3 +53,4 @@ window/stretch/aspect="expand"
 [rendering]
 
 rendering_device/driver.windows="d3d12"
+anti_aliasing/quality/msaa_3d=2
