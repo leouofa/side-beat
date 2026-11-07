@@ -509,6 +509,15 @@ func _test_synthwave_ui_styling() -> void:
 	add_child(hud)
 	var pause_p := hud.get("_pause_panel") as PanelContainer
 	_assert(pause_p != null and pause_p.has_theme_stylebox_override("panel"), "Pause card has synthwave StyleBox override")
+	_assert(hud._pause_quit_btn != null, "Pause card has quit button")
+	_assert(hud._pause_quit_btn.text == "QUIT TO MENU", "Pause quit button is labeled 'QUIT TO MENU'")
+	_assert(hud._pause_quit_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Pause quit button has pointing hand cursor")
+	var quit_emitted := [false]
+	hud.exit_to_menu_requested.connect(func(): quit_emitted[0] = true)
+	get_tree().paused = true
+	hud._pause_quit_btn.pressed.emit()
+	_assert(quit_emitted[0], "Pressing pause quit button emits exit_to_menu_requested signal")
+	_assert(not get_tree().paused, "Pressing pause quit button unpauses scene tree")
 	_assert(hud._next_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Next stage button has pointing hand cursor")
 	_assert(hud._replay_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Replay stage button has pointing hand cursor")
 	hud.free()

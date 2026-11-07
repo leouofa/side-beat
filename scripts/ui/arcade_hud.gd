@@ -7,6 +7,7 @@ extends CanvasLayer
 signal continue_accepted
 signal restart_stage_requested
 signal next_stage_requested
+signal exit_to_menu_requested
 
 var _hp_bar: ProgressBar
 var _hp_label: Label
@@ -40,6 +41,7 @@ var _toast_ctx_label: Label
 var _toast_tween: Tween
 
 var _pause_panel: PanelContainer
+var _pause_quit_btn: Button
 var _continue_panel: PanelContainer
 var _continue_timer_label: Label
 var _clear_panel: PanelContainer
@@ -347,8 +349,8 @@ func _build_modal_overlays(root: Control) -> void:
 	# Pause & Controls Card
 	_pause_panel = PanelContainer.new()
 	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
-	_pause_panel.position = Vector2(-270, -185)
-	_pause_panel.custom_minimum_size = Vector2(540, 370)
+	_pause_panel.position = Vector2(-270, -210)
+	_pause_panel.custom_minimum_size = Vector2(540, 420)
 	_pause_panel.visible = false
 	_pause_panel.add_theme_stylebox_override(
 		"panel",
@@ -396,6 +398,15 @@ func _build_modal_overlays(root: Control) -> void:
 		restart_stage_requested.emit()
 	)
 	pv.add_child(restart_btn)
+
+	_pause_quit_btn = Button.new()
+	_pause_quit_btn.text = "QUIT TO MENU"
+	SynthwaveUI.apply_button_style(_pause_quit_btn)
+	_pause_quit_btn.pressed.connect(func():
+		_set_paused(false)
+		exit_to_menu_requested.emit()
+	)
+	pv.add_child(_pause_quit_btn)
 
 	# Continue Countdown Overlay
 	_continue_panel = PanelContainer.new()
