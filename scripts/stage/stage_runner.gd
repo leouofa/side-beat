@@ -61,6 +61,7 @@ func _ready() -> void:
 	hud.continue_accepted.connect(_on_continue_accepted)
 	hud.restart_stage_requested.connect(_on_restart_requested)
 	hud.next_stage_requested.connect(_on_next_stage_requested)
+	hud.exit_to_menu_requested.connect(_on_exit_to_menu_requested)
 
 	if SoundtrackManager:
 		SoundtrackManager.set_ducked_lowpass(false, 0.1)
@@ -116,3 +117,10 @@ func _on_next_stage_requested() -> void:
 		GameManager.load_stage(next_st)
 	else:
 		get_tree().change_scene_to_file("res://scenes/ui/victory_screen.tscn")
+
+
+func _on_exit_to_menu_requested() -> void:
+	if SoundtrackManager:
+		SoundtrackManager.set_ducked_lowpass(false, 0.1)
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/ui/title_screen.tscn")

@@ -7,6 +7,7 @@ extends CanvasLayer
 signal continue_accepted
 signal restart_stage_requested
 signal next_stage_requested
+signal exit_to_menu_requested
 
 var _hp_bar: ProgressBar
 var _hp_label: Label
@@ -40,6 +41,7 @@ var _toast_ctx_label: Label
 var _toast_tween: Tween
 
 var _pause_panel: PanelContainer
+var _pause_quit_btn: Button
 var _continue_panel: PanelContainer
 var _continue_timer_label: Label
 var _clear_panel: PanelContainer
@@ -347,8 +349,8 @@ func _build_modal_overlays(root: Control) -> void:
 	# Pause & Controls Card
 	_pause_panel = PanelContainer.new()
 	_pause_panel.set_anchors_preset(Control.PRESET_CENTER)
-	_pause_panel.position = Vector2(-270, -185)
-	_pause_panel.custom_minimum_size = Vector2(540, 370)
+	_pause_panel.position = Vector2(-270, -210)
+	_pause_panel.custom_minimum_size = Vector2(540, 420)
 	_pause_panel.visible = false
 	_pause_panel.add_theme_stylebox_override(
 		"panel",
@@ -369,15 +371,14 @@ func _build_modal_overlays(root: Control) -> void:
 
 	var pbody := Label.new()
 	pbody.text = (
-		"MOVE (2.5D Belt):  WASD / Arrows / Left Stick\n"
-		+ "JUMP / DOUBLE JUMP (Horus):  Space / South (A)\n"
-		+ "LIGHT ATTACK (3-Hit / Air Chain):  J / West (X)\n"
-		+ "HEAVY / GUARD-CRUSH / UP+LAUNCHER:  K / North (Y)\n"
-		+ "PANTHEON SPECIAL 1 & 2 (25 Meter):  L (Neutral or Dir+L) / East (B)\n"
-		+ "PANTHEON SUPER (100 Meter):  O / Right Trigger (R2)\n"
-		+ "BLOCK / PERFECT PARRY (First 8f):  U or Shift / Left Trigger (L2)\n"
-		+ "GRAB & LANE THROW:  I / Right Bumper (R1)\n"
-		+ "SHARED-SOUL MORPH (0.0s Cooldown!):  Keys 1–4, Q/E, or D-Pad!\n\n"
+		"MOVE (2.5D Belt):  WASD\n"
+		+ "JUMP / DOUBLE JUMP (Horus):  Space\n"
+		+ "HEAVY / GUARD-CRUSH / UP-LAUNCHER:  K (or W+K)\n"
+		+ "AERIAL DIVE / SLAM:  K in Mid-Air\n"
+		+ "PANTHEON SPECIAL 1 & 2 (25 Meter):  L (Neutral or Dir+L)\n"
+		+ "PANTHEON SUPER (100 Meter):  O\n"
+		+ "BLOCK / PERFECT PARRY (First 8f):  U\n"
+		+ "SHARED-SOUL MORPH (0.0s Cooldown!):  Keys 1–4, Q / E\n\n"
 		+ "TIP: Chain hits across all 4 Gods in one combo for 4.0x GODLIKE Resonance!"
 	)
 	pbody.add_theme_font_size_override("font_size", 13)
@@ -397,6 +398,15 @@ func _build_modal_overlays(root: Control) -> void:
 		restart_stage_requested.emit()
 	)
 	pv.add_child(restart_btn)
+
+	_pause_quit_btn = Button.new()
+	_pause_quit_btn.text = "QUIT TO MENU"
+	SynthwaveUI.apply_button_style(_pause_quit_btn)
+	_pause_quit_btn.pressed.connect(func():
+		_set_paused(false)
+		exit_to_menu_requested.emit()
+	)
+	pv.add_child(_pause_quit_btn)
 
 	# Continue Countdown Overlay
 	_continue_panel = PanelContainer.new()
@@ -430,7 +440,7 @@ func _build_modal_overlays(root: Control) -> void:
 	cv.add_child(_continue_timer_label)
 
 	var cont_btn := Button.new()
-	cont_btn.text = "INSERT CREDIT & REVIVE [SPACE / J]"
+	cont_btn.text = "INSERT CREDIT & REVIVE [SPACE / ENTER]"
 	SynthwaveUI.apply_button_style(cont_btn)
 	cont_btn.pressed.connect(_accept_continue)
 	cv.add_child(cont_btn)
@@ -601,7 +611,7 @@ func _process(delta: float) -> void:
 		_continue_timer_label.text = str(cur_sec)
 		if cur_sec != prev_sec and SfxManager:
 			SfxManager.play_2d("continue_tick", -2.0, 0.0)
-		if Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("attack_light"):
+		if Input.is_action_just_pressed("jump") or Input.is_action_just_pressed("ui_accept"):
 			_accept_continue()
 		elif _continue_countdown <= 0.0:
 			_in_continue_prompt = false

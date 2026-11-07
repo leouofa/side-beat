@@ -32,7 +32,7 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("attack_light") or event.is_action_pressed("jump"):
+	if event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
 		if not _start_tour_btn.has_focus() and not _leaderboard_btn.has_focus() and not _jukebox_btn.has_focus() and not _how_to_play_btn.has_focus():
 			_on_start_tour_pressed()
 

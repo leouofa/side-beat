@@ -250,7 +250,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_update_selection()
 		if SfxManager:
 			SfxManager.play_2d("ui_select", 0.0, 0.0)
-	elif event.is_action_pressed("attack_light") or event.is_action_pressed("jump"):
+	elif event.is_action_pressed("ui_accept") or event.is_action_pressed("jump"):
 		_on_start_tour_pressed()
 	elif event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		_on_back_pressed()

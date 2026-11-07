@@ -73,16 +73,14 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
-text = "[b]MOVE (2.5D BELT):[/b] WASD or Arrow Keys / Left Stick
-[b]JUMP / DOUBLE JUMP:[/b] Space / South (A)
-[b]LIGHT ATTACK (3-Hit):[/b] J or Z / West (X)
-[b]HEAVY GUARD CRUSH:[/b] K or X / North (Y)
-[b]UP-LAUNCHER SLAM:[/b] Up + Heavy (K)
-[b]AERIAL JUGGLE:[/b] Light or Heavy in Mid-Air
-[b]PERFECT PARRY (8-Frame):[/b] U or Shift / Left Trigger
-[b]LANE BOWLING THROW:[/b] I or G / Right Bumper
-[b]PANTHEON SPECIALS (25% Meter):[/b] L or C / East (B)
-[b]PANTHEON SUPER (100% Meter):[/b] O or V / Right Trigger"
+text = "[b]MOVE (2.5D BELT):[/b] WASD
+[b]JUMP / DOUBLE JUMP:[/b] Space
+[b]HEAVY GUARD CRUSH:[/b] K
+[b]UP-LAUNCHER SLAM:[/b] Up + Heavy (W + K)
+[b]AERIAL DIVE / SLAM:[/b] Heavy in Mid-Air (K)
+[b]PERFECT PARRY (8-Frame):[/b] U
+[b]PANTHEON SPECIALS (25% Meter):[/b] L (Neutral or Forward/Down + L)
+[b]PANTHEON SUPER (100% Meter):[/b] O"
 
 [node name="RightCol" type="VBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer"]
 layout_mode = 2
@@ -100,7 +98,7 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 14
 bbcode_enabled = true
-text = "[b]ZERO-COOLDOWN MORPHING (Keys 1-4 / Q & E / D-Pad):[/b]
+text = "[b]ZERO-COOLDOWN MORPHING (Keys 1-4 / Q & E):[/b]
 Morph instantly mid-combo! Preserves velocity, facing, and active combo state with 2 frames of hitstun immunity.
 
 [color=#00D4FF][b][1] ENDOR (Asgardian):[/b][/color] Heavy armor-crusher, high poise, thunder hammer.
