@@ -157,6 +157,24 @@ func _test_stage_1_runtime_and_morph_preservation() -> void:
 	_assert(ply.hitstun_immunity_frames == 2, "Morph grants 2 frames of hitstun immunity")
 	_assert(SoundtrackManager.get_current_track_path() == playing_before, "Morph does NOT chop or restart active music track")
 
+	# Verify heavy melee attack posture (forward lean, forward weapon reach, planar profile)
+	ply.morph_to_slot(0)
+	ply.facing_sign = 1.0
+	ply._update_facing_visual()
+	var rig_dict: Dictionary = ply.get("_god_rigs")[0]
+	var anim: AnimationPlayer = rig_dict["anim"]
+	var skel: Skeleton3D = rig_dict["skeleton"]
+	anim.play(&"heavy_ground")
+	anim.seek(15.0 / 60.0, true)
+	var head_idx := skel.find_bone("head")
+	var ws_idx := skel.find_bone("weapon_socket.R")
+	var vp: Node3D = ply.get("_visual_pivot")
+	var head_pos: Vector3 = (vp.transform * skel.get_bone_global_pose(head_idx)).origin
+	var ws_pos: Vector3 = (vp.transform * skel.get_bone_global_pose(ws_idx)).origin
+	_assert(head_pos.x > 0.3, "Heavy attack slam leans forward (+X) in front of player origin (got %.2f)" % head_pos.x)
+	_assert(ws_pos.x > 0.5, "Heavy attack weapon extends forward into target lane (got %.2f)" % ws_pos.x)
+	_assert(absf(head_pos.z) < 0.15, "Heavy attack maintains 2.5D planar profile without screen tilt (got Z=%.2f)" % head_pos.z)
+
 	runner.queue_free()
 	await get_tree().process_frame
 
