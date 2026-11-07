@@ -32,6 +32,7 @@ func _ready() -> void:
 	_test_continue_credit_fairness()
 	_test_save_persistence()
 	_test_combat_hurtbox_deferred_deactivation()
+	_test_simplified_controls_and_instruction_screens()
 
 	print("==============================================")
 	print("Assertions: %d | Failures: %d" % [_assertions, _failures])
@@ -593,3 +594,70 @@ func _test_combat_hurtbox_deferred_deactivation() -> void:
 	enemy.queue_free()
 	prop.queue_free()
 	boss.queue_free()
+
+
+func _test_simplified_controls_and_instruction_screens() -> void:
+	# 1. Action map checks
+	_assert(not InputMap.has_action(&"attack_light") or InputMap.action_get_events(&"attack_light").is_empty(), "attack_light action is removed")
+	_assert(not InputMap.has_action(&"grab") or InputMap.action_get_events(&"grab").is_empty(), "grab action is removed")
+
+	# Check WASD only on movement
+	var move_left_events := InputMap.action_get_events(&"move_left")
+	_assert(move_left_events.size() == 1 and (move_left_events[0] as InputEventKey).physical_keycode == KEY_A, "move_left mapped strictly to KEY_A")
+	var move_right_events := InputMap.action_get_events(&"move_right")
+	_assert(move_right_events.size() == 1 and (move_right_events[0] as InputEventKey).physical_keycode == KEY_D, "move_right mapped strictly to KEY_D")
+	var move_up_events := InputMap.action_get_events(&"move_up")
+	_assert(move_up_events.size() == 1 and (move_up_events[0] as InputEventKey).physical_keycode == KEY_W, "move_up mapped strictly to KEY_W")
+	var move_down_events := InputMap.action_get_events(&"move_down")
+	_assert(move_down_events.size() == 1 and (move_down_events[0] as InputEventKey).physical_keycode == KEY_S, "move_down mapped strictly to KEY_S")
+
+	# Check combat buttons are strictly K, L, O, U
+	var heavy_events := InputMap.action_get_events(&"attack_heavy")
+	_assert(heavy_events.size() == 1 and (heavy_events[0] as InputEventKey).physical_keycode == KEY_K, "attack_heavy mapped strictly to KEY_K")
+	var special_events := InputMap.action_get_events(&"attack_special")
+	_assert(special_events.size() == 1 and (special_events[0] as InputEventKey).physical_keycode == KEY_L, "attack_special mapped strictly to KEY_L")
+	var super_events := InputMap.action_get_events(&"attack_super")
+	_assert(super_events.size() == 1 and (super_events[0] as InputEventKey).physical_keycode == KEY_O, "attack_super mapped strictly to KEY_O")
+	var parry_events := InputMap.action_get_events(&"block_parry")
+	_assert(parry_events.size() == 1 and (parry_events[0] as InputEventKey).physical_keycode == KEY_U, "block_parry mapped strictly to KEY_U")
+
+	# Jump is strictly Space
+	var jump_events := InputMap.action_get_events(&"jump")
+	_assert(jump_events.size() == 1 and (jump_events[0] as InputEventKey).physical_keycode == KEY_SPACE, "jump mapped strictly to KEY_SPACE")
+
+	# Verify no joypad events across all mapped game actions
+	var game_actions := [
+		&"move_left", &"move_right", &"move_up", &"move_down", &"jump",
+		&"attack_heavy", &"attack_special", &"attack_super", &"block_parry",
+		&"morph_1", &"morph_2", &"morph_3", &"morph_4", &"morph_prev", &"morph_next", &"pause"
+	]
+	var joypad_event_count := 0
+	for act in game_actions:
+		for ev in InputMap.action_get_events(act):
+			if ev is InputEventJoypadButton or ev is InputEventJoypadMotion:
+				joypad_event_count += 1
+	_assert(joypad_event_count == 0, "All gamepad joypad events stripped from game InputMap actions (0 found)")
+
+	# Verify How To Play screen text
+	var htp_scene := load("res://scenes/ui/how_to_play_screen.tscn") as PackedScene
+	var htp_inst := htp_scene.instantiate()
+	var controls_body := htp_inst.get_node("MarginContainer/VBoxContainer/HSplitContainer/LeftCol/ControlsBody") as RichTextLabel
+	var morph_body := htp_inst.get_node("MarginContainer/VBoxContainer/HSplitContainer/RightCol/MorphBody") as RichTextLabel
+	_assert(not controls_body.text.to_lower().contains("light attack"), "HowToPlay text does not contain 'light attack'")
+	_assert(not controls_body.text.to_lower().contains("bowling"), "HowToPlay text does not contain 'bowling'")
+	_assert(not controls_body.text.to_lower().contains("left stick"), "HowToPlay text does not contain 'left stick'")
+	_assert(not controls_body.text.to_lower().contains("arrow keys"), "HowToPlay text does not contain 'arrow keys'")
+	_assert(not morph_body.text.to_lower().contains("d-pad"), "HowToPlay morph text does not contain 'd-pad'")
+	htp_inst.free()
+
+	# Verify HUD pause card text
+	var hud := ArcadeHud.new()
+	add_child(hud)
+	var pause_panel := hud.get("_pause_panel") as PanelContainer
+	var pbody := pause_panel.get_child(0).get_child(1) as Label
+	_assert(not pbody.text.to_lower().contains("light attack"), "Pause card does not contain 'light attack'")
+	_assert(not pbody.text.to_lower().contains("lane throw"), "Pause card does not contain 'lane throw'")
+	_assert(not pbody.text.to_lower().contains("left stick"), "Pause card does not contain 'left stick'")
+	_assert(not pbody.text.to_lower().contains("d-pad"), "Pause card does not contain 'd-pad'")
+	hud.queue_free()
+

@@ -54,7 +54,6 @@ var _attack_frame_cursor: float = 0.0
 var _attack_hit_registry: Dictionary = {}
 var _queued_chain_move: StringName = &""
 var _air_combo_step: int = 0
-var _grab_cooldown: float = 0.0
 var _is_dead: bool = false
 
 
@@ -229,8 +228,6 @@ func _physics_process(delta: float) -> void:
 	resonance.tick(delta, frozen or _current_attack != null)
 	if invuln_timer > 0.0:
 		invuln_timer = maxf(0.0, invuln_timer - delta)
-	if _grab_cooldown > 0.0:
-		_grab_cooldown = maxf(0.0, _grab_cooldown - delta)
 
 	# Instant Zero-Cooldown Morph inputs are ALWAYS responsive (even during hitstop or mid-combo!)
 	_poll_morph_inputs()
@@ -279,7 +276,7 @@ func _handle_combat_and_locomotion(delta: float) -> void:
 	var prof := active_god()
 	var move_vec := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 
-	# Update horizontal facing before actions so attacks, grabs, and jumps turn toward input direction
+	# Update horizontal facing before actions so attacks and jumps turn toward input direction
 	if absf(move_vec.x) > 0.12:
 		facing_sign = 1.0 if move_vec.x > 0.0 else -1.0
 		_update_facing_visual()
@@ -304,11 +301,6 @@ func _handle_combat_and_locomotion(delta: float) -> void:
 	# Check new combat inputs
 	if _try_trigger_attack_inputs(move_vec):
 		return
-
-	# Grab / Throw
-	if Input.is_action_just_pressed("grab") and is_on_floor() and _grab_cooldown <= 0.0:
-		if _try_execute_grab():
-			return
 
 	# Jump & Horus Double Jump
 	if Input.is_action_just_pressed("jump"):
@@ -357,15 +349,6 @@ func _try_trigger_attack_inputs(move_vec: Vector2) -> bool:
 			start_attack(&"launcher_up")
 		else:
 			start_attack(&"heavy_ground")
-		return true
-	if Input.is_action_just_pressed("attack_light"):
-		if not is_on_floor():
-			_air_combo_step = 1
-			start_attack(&"air_combo_1")
-		elif move_vec.y < -0.55:
-			start_attack(&"launcher_up")
-		else:
-			start_attack(&"light_1")
 		return true
 	return false
 
@@ -440,13 +423,6 @@ func _tick_active_attack(delta: float, move_vec: Vector2) -> void:
 				_queued_chain_move = &"launcher_up"
 			else:
 				_queued_chain_move = &"heavy_ground"
-		elif Input.is_action_just_pressed("attack_light"):
-			if move.move_id == &"light_1":
-				_queued_chain_move = &"light_2"
-			elif move.move_id == &"light_2":
-				_queued_chain_move = &"light_3"
-			elif move.move_id == &"air_combo_1":
-				_queued_chain_move = &"air_combo_2"
 
 	var in_active := _attack_frame_cursor >= float(move.startup_frames) and _attack_frame_cursor < float(move.startup_frames + move.active_frames)
 	if in_active:
@@ -510,33 +486,6 @@ func _cancel_active_attack() -> void:
 	_deactivate_all_hitboxes()
 	_current_attack = null
 	_queued_chain_move = &""
-
-
-func _try_execute_grab() -> bool:
-	var best_target: Node3D = null
-	var best_dist := 1.85
-	for node in get_tree().get_nodes_in_group("enemies"):
-		if not (node is Node3D) or not is_instance_valid(node):
-			continue
-		var enemy := node as Node3D
-		var delta_p := enemy.global_position - global_position
-		if delta_p.x * facing_sign < -0.25 or absf(delta_p.z) > 1.15:
-			continue
-		var d := Vector2(delta_p.x, delta_p.z).length()
-		if d < best_dist:
-			best_dist = d
-			best_target = enemy
-
-	if best_target == null or not best_target.has_method("receive_throw"):
-		return false
-
-	_grab_cooldown = 0.55
-	_play_anim(&"heavy_ground", 1.45)
-	if SfxManager:
-		SfxManager.play_3d("grab_throw", global_position, 0.0, 0.05)
-	best_target.receive_throw(facing_sign, 85.0 * active_god().damage_mult)
-	_register_successful_player_hit(active_god().moves[&"light_3"], best_target.global_position + Vector3(0.0, 1.0, 0.0), 85.0)
-	return true
 
 
 func _on_strike_landed(target_owner: Node, hit_result: Dictionary) -> void:

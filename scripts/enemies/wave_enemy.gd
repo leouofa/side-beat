@@ -86,7 +86,6 @@ var _hitstun_timer: float = 0.0
 var _attack_cooldown: float = 0.8
 var _attack_timer: float = 0.0
 var _is_attacking: bool = false
-var _is_thrown: bool = false
 var _is_dead: bool = false
 var _ground_bounced: bool = false
 var _wall_bounced: bool = false
@@ -240,22 +239,6 @@ func _physics_process(delta: float) -> void:
 	if _attack_cooldown > 0.0:
 		_attack_cooldown -= delta
 
-	# Thrown bowling physics: knock down adjacent enemies!
-	if _is_thrown:
-		if not is_on_floor():
-			velocity.y -= GRAVITY * delta
-		move_and_slide()
-		_check_wall_and_ground_bounces()
-		for node in get_tree().get_nodes_in_group("enemies"):
-			if node != self and node is WaveEnemy and not (node as WaveEnemy)._is_dead:
-				var other := node as WaveEnemy
-				if other.global_position.distance_to(global_position) < 1.1:
-					other.apply_collateral_knockdown(signf(velocity.x), 45.0)
-		if is_on_floor() and absf(velocity.x) < 1.5:
-			_is_thrown = false
-		_clamp_corridor()
-		return
-
 	if _hitstun_timer > 0.0:
 		_hitstun_timer -= delta
 		if not is_on_floor():
@@ -393,36 +376,6 @@ func on_parried(armor_shatter: float) -> void:
 	_hitstun_timer = 0.85
 	velocity = Vector3(-facing_sign * 4.5, 2.5, 0.0)
 	_play_anim(&"hit_light", 0.85)
-
-
-func receive_throw(dir_sign: float, dmg: float) -> void:
-	if _is_dead:
-		return
-	_finish_attack(1.1)
-	hp = maxf(0.0, hp - dmg)
-	_update_hp_bar()
-	if hp <= 0.0:
-		_die(dir_sign)
-		return
-	_is_thrown = true
-	_hitstun_timer = 0.75
-	velocity = Vector3(dir_sign * 11.5, 5.2, 0.0)
-	_play_anim(&"hit_launch_arc", 1.1)
-
-
-func apply_collateral_knockdown(dir_sign: float, dmg: float) -> void:
-	if _is_dead or _hitstun_timer > 0.2:
-		return
-	hp = maxf(0.0, hp - dmg)
-	_update_hp_bar()
-	if HitstopManager:
-		HitstopManager.spawn_hit_spark(global_position + Vector3(0.0, 1.0, 0.0), Color("#FFE066"), 0.9)
-	if hp <= 0.0:
-		_die(dir_sign)
-		return
-	_hitstun_timer = 0.45
-	velocity = Vector3(dir_sign * 5.5, 3.6, 0.0)
-	_play_anim(&"hit_launch_arc", 1.15)
 
 
 func receive_hit(payload: Dictionary) -> Dictionary:
