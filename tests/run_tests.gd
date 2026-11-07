@@ -347,6 +347,32 @@ func _test_arcade_menus_and_ui() -> void:
 	var title_inst := title_scene.instantiate()
 	add_child(title_inst)
 	_assert(title_inst.has_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn"), "Title screen has StartTourBtn")
+	var start_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn") as Button
+	var lead_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/LeaderboardBtn") as Button
+	var juke_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/JukeboxBtn") as Button
+	var how_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/HowToPlayBtn") as Button
+	var quit_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/QuitBtn") as Button
+	_assert(start_btn.text == "START WORLD TOUR", "StartTourBtn text has no number prefix")
+	_assert(lead_btn.text == "TOP-10 LEADERBOARD", "LeaderboardBtn text has no number prefix")
+	_assert(juke_btn.text == "JUKEBOX", "JukeboxBtn renamed to JUKEBOX without track count")
+	_assert(how_btn.text == "HOW TO PLAY", "HowToPlayBtn renamed to HOW TO PLAY without controls suffix")
+	_assert(quit_btn.text == "QUIT TO DESKTOP", "QuitBtn text has no number prefix")
+	var uniform_font_sizes := (
+		start_btn.get_theme_font_size("font_size") == 16
+		and lead_btn.get_theme_font_size("font_size") == 16
+		and juke_btn.get_theme_font_size("font_size") == 16
+		and how_btn.get_theme_font_size("font_size") == 16
+		and quit_btn.get_theme_font_size("font_size") == 16
+	)
+	_assert(uniform_font_sizes, "All title screen menu buttons have uniform 16px font size")
+	var uniform_heights := (
+		start_btn.custom_minimum_size == Vector2(360, 44)
+		and lead_btn.custom_minimum_size == Vector2(360, 44)
+		and juke_btn.custom_minimum_size == Vector2(360, 44)
+		and how_btn.custom_minimum_size == Vector2(360, 44)
+		and quit_btn.custom_minimum_size == Vector2(360, 44)
+	)
+	_assert(uniform_heights, "All title screen menu buttons have uniform 360x44 minimum size")
 	title_inst.free()
 
 	# God Select Screen
