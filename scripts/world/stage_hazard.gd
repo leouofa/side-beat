@@ -8,16 +8,21 @@ var _timer: float = 0.0
 var _telegraphed: bool = false
 
 
+func _init() -> void:
+	collision_layer = (1 << 7)
+	collision_mask = (1 << 1) | (1 << 2)
+	monitoring = true
+	monitorable = false
+
+
 func setup_hazard(kind: String, phase_offset: float = 0.0) -> void:
 	hazard_kind = kind
 	_timer = phase_offset
 
 
 func _ready() -> void:
-	collision_layer = (1 << 7)
-	collision_mask = (1 << 1) | (1 << 2)
-	monitoring = true
-	monitorable = false
+	set_deferred(&"monitoring", true)
+	set_deferred(&"monitorable", false)
 
 	var col := CollisionShape3D.new()
 	var box := BoxShape3D.new()

@@ -461,6 +461,13 @@ func _test_combat_hurtbox_deferred_deactivation() -> void:
 	var prop_hit_res: Dictionary = prop.receive_hit({"raw_damage": 999.0, "facing_sign": 1.0})
 	_assert(prop_hit_res.get("connected", false) == true, "DestructibleProp receives strike")
 	_assert(prop.get("_destroyed") == true, "DestructibleProp shatters cleanly")
+	var found_pickup := false
+	for child in get_children():
+		if child is PickupItem:
+			found_pickup = true
+			child.queue_free()
+			break
+	_assert(found_pickup, "DestructibleProp spawned PickupItem without query flush error")
 
 	# BossController lethal KO test
 	var boss := BossController.new()

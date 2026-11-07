@@ -11,15 +11,20 @@ var _halo: MeshInstance3D
 var _bob_time: float = 0.0
 
 
+func _init() -> void:
+	collision_layer = (1 << 6) # Layer 7: Pickup
+	collision_mask = (1 << 1)  # Layer 2: PlayerBody
+	monitoring = true
+	monitorable = false
+
+
 func setup_pickup(kind: String) -> void:
 	pickup_kind = kind
 
 
 func _ready() -> void:
-	collision_layer = (1 << 6) # Layer 7: Pickup
-	collision_mask = (1 << 1)  # Layer 2: PlayerBody
-	monitoring = true
-	monitorable = false
+	set_deferred(&"monitoring", true)
+	set_deferred(&"monitorable", false)
 
 	var col := CollisionShape3D.new()
 	var sph := SphereShape3D.new()
