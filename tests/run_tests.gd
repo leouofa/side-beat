@@ -398,6 +398,40 @@ func _test_arcade_menus_and_ui() -> void:
 	_assert(vic_inst.has_node("MarginContainer/VBoxContainer/ReturnBtn"), "Victory screen has ReturnBtn")
 	vic_inst.free()
 
+	# Stage Clear Screen behavior on Intermediate vs Final Stage
+	var hud := ArcadeHud.new()
+	add_child(hud)
+	var stage_1_summary: Dictionary = {
+		"stage": 1,
+		"rank": "S",
+		"stage_score": 10000,
+		"run_score": 10000,
+		"clear_time_sec": 45.0,
+		"max_combo": 30,
+		"damage_taken": 20,
+		"max_variety": 4,
+		"best_resonance": "GODLIKE",
+	}
+	hud.show_stage_clear_summary(stage_1_summary)
+	_assert(hud._next_stage_btn.text == "ADVANCE TO STAGE 2 >>", "Intermediate stage clear button advances to next stage")
+	_assert(hud._replay_stage_btn.visible, "Intermediate stage keeps restart current city button visible")
+
+	var final_stage_summary: Dictionary = {
+		"stage": GameManager.max_implemented_stage,
+		"rank": "S",
+		"stage_score": 50000,
+		"run_score": 250000,
+		"clear_time_sec": 90.0,
+		"max_combo": 65,
+		"damage_taken": 100,
+		"max_variety": 4,
+		"best_resonance": "GODLIKE",
+	}
+	hud.show_stage_clear_summary(final_stage_summary)
+	_assert(hud._next_stage_btn.text == "COMPLETE TOUR & VIEW CREDITS", "Final stage clear button displays 'COMPLETE TOUR & VIEW CREDITS'")
+	_assert(not hud._replay_stage_btn.visible, "Final stage clear hides restart current city button")
+	hud.free()
+
 
 func _test_stage_grading_math() -> void:
 	GameManager.reset_stage_metrics()
