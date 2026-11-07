@@ -235,11 +235,11 @@ func _build_ui() -> void:
 	_go_label.add_theme_color_override("font_color", Color("#32FF7E"))
 	root.add_child(_go_label)
 
-	# 3. RIGHT-MIDDLE: Cross-Pantheon Resonance Widget
+	# 3. BOTTOM-RIGHT: Cross-Pantheon Resonance Widget (across from now-playing toast)
 	_resonance_box = PanelContainer.new()
-	_resonance_box.set_anchors_preset(Control.PRESET_CENTER_RIGHT)
-	_resonance_box.position = Vector2(-268, -75)
-	_resonance_box.custom_minimum_size = Vector2(250, 110)
+	_resonance_box.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	_resonance_box.position = Vector2(-268, -108)
+	_resonance_box.custom_minimum_size = Vector2(250, 94)
 	_resonance_box.visible = false
 	_resonance_box.add_theme_stylebox_override("panel", _make_box_style(Color(0.07, 0.05, 0.14, 0.90), Color("#FF7A00"), 2, 6))
 	root.add_child(_resonance_box)
