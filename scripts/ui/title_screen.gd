@@ -8,10 +8,8 @@ extends Control
 @onready var _how_to_play_btn: Button = $MarginContainer/VBoxContainer/MenuContainer/HowToPlayBtn
 @onready var _quit_btn: Button = $MarginContainer/VBoxContainer/MenuContainer/QuitBtn
 @onready var _high_score_label: Label = $MarginContainer/VBoxContainer/Header/HighScoreLabel
-@onready var _prompt_label: Label = $MarginContainer/VBoxContainer/PromptLabel
 @onready var _menu_container: VBoxContainer = $MarginContainer/VBoxContainer/MenuContainer
 
-var _blink_timer: float = 0.0
 var _card_style: StyleBoxFlat
 
 
@@ -31,11 +29,6 @@ func _ready() -> void:
 	_quit_btn.pressed.connect(_on_quit_pressed)
 
 	_start_tour_btn.grab_focus()
-
-
-func _process(delta: float) -> void:
-	_blink_timer += delta
-	_prompt_label.modulate.a = 0.35 + 0.65 * absf(sin(_blink_timer * 4.0))
 
 
 func _unhandled_input(event: InputEvent) -> void:

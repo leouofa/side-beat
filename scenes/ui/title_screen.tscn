@@ -88,13 +88,6 @@ theme_override_font_sizes/font_size = 18
 text = "SHARED-SOUL MYTHIC MORPH FIGHTER"
 horizontal_alignment = 1
 
-[node name="PromptLabel" type="Label" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.9, 0.95, 1, 1)
-theme_override_font_sizes/font_size = 18
-text = "— PRESS ENTER / SPACE OR BUTTON (A) TO INSERT COIN —"
-horizontal_alignment = 1
-
 [node name="MenuContainer" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
