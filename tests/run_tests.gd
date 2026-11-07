@@ -578,6 +578,49 @@ func _test_combat_hurtbox_deferred_deactivation() -> void:
 	_assert(enemy_hit_res.get("ko", false) == true, "WaveEnemy KO'd on lethal strike")
 	_assert(enemy.get("_is_dead") == true, "WaveEnemy marked dead cleanly")
 
+	# Check ko_collapse bone ground contact
+	var enemy_glb := GlbLoader.instantiate_glb("res://assets/enemies/enemy_base.glb")
+	add_child(enemy_glb)
+	var e_anim := GlbLoader.find_anim_player(enemy_glb)
+	var e_skel := GlbLoader.find_skeleton(enemy_glb)
+	_assert(e_anim != null and e_anim.has_animation("ko_collapse"), "EnemyBase GLB has ko_collapse clip")
+	if e_anim and e_skel:
+		e_anim.play("ko_collapse")
+		e_anim.advance(0.5)
+		var h_idx := e_skel.find_bone("hips")
+		var hd_idx := e_skel.find_bone("head")
+		var hips_y := e_skel.get_bone_global_pose(h_idx).origin.y if h_idx >= 0 else 99.0
+		var head_y := e_skel.get_bone_global_pose(hd_idx).origin.y if hd_idx >= 0 else 99.0
+		_assert(hips_y <= 0.25, "Enemy ko_collapse hips touch ground (got Y=%.2f <= 0.25)" % hips_y)
+		_assert(head_y <= 0.25, "Enemy ko_collapse head rests on ground (got Y=%.2f <= 0.25)" % head_y)
+	enemy_glb.queue_free()
+
+	# Airborne enemy death and ground landing test
+	var test_floor := StaticBody3D.new()
+	test_floor.collision_layer = (1 << 0)
+	var f_col := CollisionShape3D.new()
+	var f_box := BoxShape3D.new()
+	f_box.size = Vector3(50.0, 1.0, 10.0)
+	f_col.shape = f_box
+	f_col.position = Vector3(0.0, -0.5, 0.0)
+	test_floor.add_child(f_col)
+	add_child(test_floor)
+
+	var air_enemy := WaveEnemy.new()
+	add_child(air_enemy)
+	air_enemy.global_position = Vector3(10.0, 3.5, 0.0)
+	air_enemy.configure_tier("thug")
+	air_enemy.receive_hit({"raw_damage": 999.0, "facing_sign": 1.0})
+	_assert(air_enemy.get("_is_dead") == true, "Airborne WaveEnemy marked dead")
+	_assert(air_enemy.get("_death_landed") == false, "Airborne WaveEnemy not yet landed immediately on hit")
+	for _f in range(80):
+		if not is_instance_valid(air_enemy) or air_enemy.is_queued_for_deletion():
+			break
+		air_enemy._physics_process(1.0 / 60.0)
+	_assert(air_enemy.get("_death_landed") == true, "Airborne WaveEnemy lands on floor before despawning")
+	air_enemy.queue_free()
+	test_floor.queue_free()
+
 	# DestructibleProp shatter test
 	var prop := DestructibleProp.new()
 	add_child(prop)

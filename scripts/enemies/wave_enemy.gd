@@ -87,6 +87,9 @@ var _attack_cooldown: float = 0.8
 var _attack_timer: float = 0.0
 var _is_attacking: bool = false
 var _is_dead: bool = false
+var _death_landed: bool = false
+var _death_ground_timer: float = 0.0
+var _death_safety_timer: float = 0.0
 var _ground_bounced: bool = false
 var _wall_bounced: bool = false
 var _hit_registry: Dictionary = {}
@@ -230,10 +233,22 @@ func _physics_process(delta: float) -> void:
 		return
 
 	if _is_dead:
+		_death_safety_timer += delta
 		if not is_on_floor():
 			velocity.y -= GRAVITY * delta
-		velocity.x = move_toward(velocity.x, 0.0, 16.0 * delta)
+		else:
+			if not _death_landed:
+				_death_landed = true
+			velocity.y = 0.0
+			velocity.x = move_toward(velocity.x, 0.0, 24.0 * delta)
+			velocity.z = move_toward(velocity.z, 0.0, 24.0 * delta)
 		move_and_slide()
+		if _death_landed:
+			_death_ground_timer += delta
+			if _death_ground_timer >= 0.70:
+				queue_free()
+		elif _death_safety_timer >= 3.0:
+			queue_free()
 		return
 
 	if _attack_cooldown > 0.0:
@@ -433,6 +448,9 @@ func _check_wall_and_ground_bounces() -> void:
 
 func _die(dir_sign: float) -> void:
 	_is_dead = true
+	_death_landed = false
+	_death_ground_timer = 0.0
+	_death_safety_timer = 0.0
 	_hitbox.deactivate()
 	_hp_bar_root.visible = false
 	set_deferred(&"collision_layer", 0)
@@ -445,9 +463,6 @@ func _die(dir_sign: float) -> void:
 	if GameManager:
 		GameManager.add_score(score_value)
 	defeated.emit(self, score_value, global_position)
-	var tw := create_tween()
-	tw.tween_interval(0.95)
-	tw.tween_callback(queue_free)
 
 
 func _update_facing_visual() -> void:

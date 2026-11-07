@@ -105,8 +105,8 @@ def build_enemy_base() -> None:
     }
     author_nla_action(arm_obj, "ko_collapse", [
         (1, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
-        (14, ko_pose, {"hips": (0.0, 0.18, -0.72)}),
-        (36, ko_pose, {"hips": (0.0, 0.18, -0.72)}),
+        (14, ko_pose, {"hips": (0.0, -0.76, 0.18)}),
+        (36, ko_pose, {"hips": (0.0, -0.76, 0.18)}),
     ])
 
     tris = count_scene_triangles()

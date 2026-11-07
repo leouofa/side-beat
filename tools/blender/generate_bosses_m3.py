@@ -117,13 +117,15 @@ def author_standard_boss_clips_m3(arm_obj: bpy.types.Object, has_wings: bool = F
         (45, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
+    hips_rest_z = arm_obj.pose.bones["hips"].head.z if "hips" in arm_obj.pose.bones else 0.94
+    dy = -(hips_rest_z - 0.18)
     ko_fall = merge_pose(STANCE_BASE, {"hips": (-45, 0, 0), "chest": (-35, 0, 0), "head": (-20, 0, 0)})
     ko_ground = merge_pose(STANCE_BASE, {"hips": (-88, 0, 0), "chest": (-88, 0, 0), "head": (-85, 0, 0)})
     author_nla_action(arm_obj, "ko_collapse", [
         (1, STANCE_BASE, None),
-        (15, ko_fall, {"hips": (0.0, 0.15, -0.35)}),
-        (28, ko_ground, {"hips": (0.0, 0.35, -0.75)}),
-        (60, ko_ground, {"hips": (0.0, 0.35, -0.75)}),
+        (15, ko_fall, {"hips": (0.0, dy * 0.5, 0.10)}),
+        (28, ko_ground, {"hips": (0.0, dy, 0.18)}),
+        (60, ko_ground, {"hips": (0.0, dy, 0.18)}),
     ])
 
     hl = merge_pose(STANCE_BASE, {"chest": (-18, 0, 0), "head": (-15, 0, 0)})

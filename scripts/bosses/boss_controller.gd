@@ -147,6 +147,9 @@ func _physics_process(delta: float) -> void:
 	if _is_dead:
 		if not is_on_floor():
 			velocity.y -= GRAVITY * delta
+		else:
+			velocity.y = 0.0
+			velocity.z = move_toward(velocity.z, 0.0, 14.0 * delta)
 		velocity.x = move_toward(velocity.x, 0.0, 14.0 * delta)
 		move_and_slide()
 		return
