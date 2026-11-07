@@ -9,11 +9,16 @@ var attacker: Node = null
 var _attack_data: AttackData
 
 
-func _ready() -> void:
+func _init() -> void:
 	collision_layer = (1 << 4)
 	collision_mask = (1 << 3)
 	monitoring = true
 	monitorable = false
+
+
+func _ready() -> void:
+	set_deferred(&"monitoring", true)
+	set_deferred(&"monitorable", false)
 
 	var col := CollisionShape3D.new()
 	var sph := SphereShape3D.new()

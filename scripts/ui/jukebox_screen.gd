@@ -68,8 +68,9 @@ func _populate_track_list() -> void:
 		var is_unlocked := true
 		if SaveManager and not SaveManager.is_track_unlocked(path):
 			# If locked in campaign, still display with badge or full title
-			is_unlocked = SaveManager.is_track_unlocked(path)
-		_track_list.add_item("%02d. %s" % [i + 1, title])
+			is_unlocked = false
+		var lock_tag := "" if is_unlocked else " [LOCKED]"
+		_track_list.add_item("%02d. %s%s" % [i + 1, title, lock_tag])
 
 
 func _select_track(idx: int, play_immediately: bool = true) -> void:

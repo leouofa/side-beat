@@ -30,6 +30,7 @@ func _ready() -> void:
 	_test_stage_grading_math()
 	_test_continue_credit_fairness()
 	_test_save_persistence()
+	_test_combat_hurtbox_deferred_deactivation()
 
 	print("==============================================")
 	print("Assertions: %d | Failures: %d" % [_assertions, _failures])
@@ -442,3 +443,39 @@ func _test_save_persistence() -> void:
 	DirAccess.remove_absolute(ProjectSettings.globalize_path("user://test_side_beat_save.json"))
 	SaveManager.save_path_override = ""
 	SaveManager.load_save()
+
+
+func _test_combat_hurtbox_deferred_deactivation() -> void:
+	# WaveEnemy lethal KO test
+	var enemy := WaveEnemy.new()
+	add_child(enemy)
+	enemy.configure_tier("thug")
+	var enemy_hit_res: Dictionary = enemy.receive_hit({"raw_damage": 999.0, "facing_sign": 1.0})
+	_assert(enemy_hit_res.get("ko", false) == true, "WaveEnemy KO'd on lethal strike")
+	_assert(enemy.get("_is_dead") == true, "WaveEnemy marked dead cleanly")
+
+	# DestructibleProp shatter test
+	var prop := DestructibleProp.new()
+	add_child(prop)
+	prop.setup_prop("fire_hydrant")
+	var prop_hit_res: Dictionary = prop.receive_hit({"raw_damage": 999.0, "facing_sign": 1.0})
+	_assert(prop_hit_res.get("connected", false) == true, "DestructibleProp receives strike")
+	_assert(prop.get("_destroyed") == true, "DestructibleProp shatters cleanly")
+	var found_pickup := false
+	for child in get_children():
+		if child is PickupItem:
+			found_pickup = true
+			child.queue_free()
+			break
+	_assert(found_pickup, "DestructibleProp spawned PickupItem without query flush error")
+
+	# BossController lethal KO test
+	var boss := BossController.new()
+	add_child(boss)
+	boss.setup_boss("chadzug", 0.0, 20.0)
+	var boss_hit_res: Dictionary = boss.receive_hit({"raw_damage": 9999.0, "facing_sign": 1.0})
+	_assert(boss_hit_res.get("ko", false) == true, "BossController KO'd on lethal strike")
+
+	enemy.queue_free()
+	prop.queue_free()
+	boss.queue_free()
