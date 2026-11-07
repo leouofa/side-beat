@@ -35,6 +35,7 @@ func _ready() -> void:
 	_test_simplified_controls_and_instruction_screens()
 	_test_battle_arena_on_screen_containment()
 	await _test_shader_effects_and_post_fx()
+	_test_snappy_prop_and_ko_hitstop()
 
 	print("==============================================")
 	print("Assertions: %d | Failures: %d" % [_assertions, _failures])
@@ -872,6 +873,45 @@ func _test_shader_effects_and_post_fx() -> void:
 	gen.free()
 	await get_tree().process_frame
 	await get_tree().process_frame
+
+
+func _test_snappy_prop_and_ko_hitstop() -> void:
+	# 1. Verify DestructibleProp receive_hit payload tags is_prop and destroyed
+	var prop := DestructibleProp.new()
+	add_child(prop)
+	prop.hp = 100.0
+	var res1 := prop.receive_hit({"raw_damage": 30.0})
+	_assert(res1["is_prop"] == true and res1["destroyed"] == false, "DestructibleProp non-lethal strike sets is_prop=true and destroyed=false")
+	var res2 := prop.receive_hit({"raw_damage": 100.0})
+	_assert(res2["is_prop"] == true and res2["destroyed"] == true, "DestructibleProp lethal strike sets is_prop=true and destroyed=true")
+
+	# 2. Verify SharedSoulPlayer _register_successful_player_hit triggers 0 frames on prop
+	var ply_scene := load("res://scenes/player/shared_soul_player.tscn") as PackedScene
+	var ply := ply_scene.instantiate() as SharedSoulPlayer
+	add_child(ply)
+	var move := AttackData.new()
+	move.hitstop_frames = 6
+	move.spark_scale = 1.0
+
+	HitstopManager.set("_hitstop_timer", 0.0)
+	ply._register_successful_player_hit(move, Vector3.ZERO, 50.0, true, true)
+	_assert(is_equal_approx(float(HitstopManager.get("_hitstop_timer")), 0.0), "Prop destruction applies 0 hitstop frames to HitstopManager (snappy flow)")
+
+	# 3. Verify lethal enemy KO triggers exactly 2 frames of hitstop (~0.0333s)
+	HitstopManager.set("_hitstop_timer", 0.0)
+	ply._register_successful_player_hit(move, Vector3.ZERO, 50.0, false, true)
+	var ko_timer: float = HitstopManager.get("_hitstop_timer")
+	_assert(is_equal_approx(ko_timer, 2.0 / 60.0), "Enemy lethal KO applies exactly 2 hitstop frames (got %f, expected %f)" % [ko_timer, 2.0 / 60.0])
+
+	# 4. Verify non-lethal hit against living enemy applies full move.hitstop_frames
+	HitstopManager.set("_hitstop_timer", 0.0)
+	ply._register_successful_player_hit(move, Vector3.ZERO, 50.0, false, false)
+	var normal_timer: float = HitstopManager.get("_hitstop_timer")
+	_assert(is_equal_approx(normal_timer, 6.0 / 60.0), "Non-lethal hit on enemy applies full move.hitstop_frames (got %f, expected %f)" % [normal_timer, 6.0 / 60.0])
+
+	HitstopManager.set("_hitstop_timer", 0.0)
+	ply.free()
+
 
 
 

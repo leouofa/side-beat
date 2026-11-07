@@ -503,20 +503,21 @@ func _on_strike_landed(target_owner: Node, hit_result: Dictionary) -> void:
 	if _current_attack == null:
 		return
 	var dealt := float(hit_result.get("damage_dealt", _current_attack.damage))
-	var hit_pos: Vector3 = hit_result.get("hit_position", target_owner.global_position + Vector3(0, 1, 0))
-	_register_successful_player_hit(_current_attack, hit_pos, dealt)
+	var hit_pos: Vector3 = hit_result.get("hit_position", target_owner.global_position + Vector3(0, 1, 0) if target_owner is Node3D else global_position)
+	var is_prop := (target_owner is DestructibleProp) or bool(hit_result.get("is_prop", false))
+	var is_ko := bool(hit_result.get("ko", false)) or (is_prop and bool(hit_result.get("destroyed", false)))
+	_register_successful_player_hit(_current_attack, hit_pos, dealt, is_prop, is_ko)
 
 	# Osiris Crook Vortex Z-Corridor Pull
-	if _current_attack.pulls_z_corridor and target_owner is Node3D:
+	if _current_attack.pulls_z_corridor and target_owner is Node3D and not is_prop:
 		var t3 := target_owner as Node3D
 		var cluster_pos := global_position + Vector3(facing_sign * 1.65, t3.global_position.y - global_position.y, 0.0)
 		t3.global_position.z = lerpf(t3.global_position.z, global_position.z, 0.82)
 		t3.global_position.x = lerpf(t3.global_position.x, cluster_pos.x, 0.55)
 
 
-func _register_successful_player_hit(move: AttackData, hit_pos: Vector3, dealt_damage: float) -> void:
+func _register_successful_player_hit(move: AttackData, hit_pos: Vector3, dealt_damage: float, is_prop: bool = false, is_ko: bool = false) -> void:
 	var prof := active_god()
-	var is_prop := false
 	var res_info := resonance.register_hit(prof.id)
 	var meter_mult := float(res_info.get("meter_multiplier", 1.0))
 	if move.meter_gain > 0.0:
@@ -533,7 +534,16 @@ func _register_successful_player_hit(move: AttackData, hit_pos: Vector3, dealt_d
 		)
 
 	if HitstopManager:
-		HitstopManager.trigger_hitstop(move.hitstop_frames, 0.16 * move.spark_scale)
+		var hitstop_f := move.hitstop_frames
+		var shake_trauma := 0.16 * move.spark_scale
+		if is_prop:
+			hitstop_f = 0
+			shake_trauma = 0.08
+		elif is_ko:
+			hitstop_f = 2
+
+		if hitstop_f > 0 or shake_trauma > 0.0:
+			HitstopManager.trigger_hitstop(hitstop_f, shake_trauma)
 		HitstopManager.spawn_hit_spark(hit_pos, prof.primary_color, move.spark_scale)
 	if SfxManager:
 		SfxManager.play_3d(move.sfx_hit, hit_pos, 0.0, 0.07)
