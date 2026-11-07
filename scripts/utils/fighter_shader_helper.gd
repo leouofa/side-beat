@@ -9,10 +9,6 @@ const SURFACE_FX_SHADER := preload("res://shaders/fighter_surface_fx.gdshader")
 const KO_DISSOLVE_SHADER := preload("res://shaders/fighter_ko_dissolve.gdshader")
 
 
-static func _is_headless_dummy() -> bool:
-	return DisplayServer.get_name() == "headless" or RenderingServer.get_current_rendering_driver_name() == "dummy"
-
-
 static func attach_surface_fx(
 	rig_root: Node3D,
 	rim_color: Color,
@@ -27,27 +23,14 @@ static func attach_surface_fx(
 	fx_mat.set_shader_parameter("enrage_factor", 0.0)
 	fx_mat.set_shader_parameter("hit_flash_amount", 0.0)
 
-	if rig_root == null or _is_headless_dummy():
+	if rig_root == null:
 		return fx_mat
 
 	for child in rig_root.find_children("*", "MeshInstance3D", true, false):
 		var mi := child as MeshInstance3D
 		if mi.mesh == null:
 			continue
-		if mi.material_override is BaseMaterial3D:
-			(mi.material_override as BaseMaterial3D).next_pass = fx_mat
-			continue
-		for s_idx in range(mi.mesh.get_surface_count()):
-			var surf_mat := mi.get_surface_override_material(s_idx)
-			if surf_mat == null:
-				var orig := mi.mesh.surface_get_material(s_idx)
-				if orig is BaseMaterial3D:
-					surf_mat = (orig as BaseMaterial3D).duplicate()
-				else:
-					surf_mat = StandardMaterial3D.new()
-				mi.set_surface_override_material(s_idx, surf_mat)
-			if surf_mat is BaseMaterial3D:
-				(surf_mat as BaseMaterial3D).next_pass = fx_mat
+		mi.material_overlay = fx_mat
 
 	return fx_mat
 
@@ -97,16 +80,17 @@ static func trigger_ko_dissolve(
 	dis_mat.set_shader_parameter("burn_color", burn_color)
 	dis_mat.set_shader_parameter("dissolve_progress", 0.0)
 
-	if rig_root != null and not _is_headless_dummy():
+	if rig_root != null:
 		for child in rig_root.find_children("*", "MeshInstance3D", true, false):
 			var mi := child as MeshInstance3D
 			if mi.mesh == null:
 				continue
-			# Capture base color from existing material if available
 			var active_mat := mi.get_active_material(0)
 			if active_mat is StandardMaterial3D:
 				dis_mat.set_shader_parameter("base_color", (active_mat as StandardMaterial3D).albedo_color)
-				(active_mat as StandardMaterial3D).next_pass = null
+			for s_idx in range(mi.mesh.get_surface_count()):
+				mi.set_surface_override_material(s_idx, null)
+			mi.material_overlay = null
 			mi.material_override = dis_mat
 
 	if owner_node != null and owner_node.is_inside_tree():
@@ -121,3 +105,17 @@ static func trigger_ko_dissolve(
 		)
 
 	return dis_mat
+
+
+static func clear_surface_fx(rig_root: Node3D) -> void:
+	if rig_root == null:
+		return
+	for child in rig_root.find_children("*", "MeshInstance3D", true, false):
+		var mi := child as MeshInstance3D
+		if mi == null:
+			continue
+		if mi.mesh:
+			for s_idx in range(mi.mesh.get_surface_count()):
+				mi.set_surface_override_material(s_idx, null)
+		mi.material_overlay = null
+		mi.material_override = null
