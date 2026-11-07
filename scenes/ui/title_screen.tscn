@@ -1,6 +1,20 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/title_screen.gd" id="1_title"]
+[ext_resource type="Shader" path="res://shaders/synthwave_cityline.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_synth"]
+shader = ExtResource("2_shader")
+shader_parameter/sky_top_color = Color(0.02, 0.01, 0.07, 1)
+shader_parameter/sky_bottom_color = Color(0.16, 0.04, 0.25, 1)
+shader_parameter/horizon_glow_color = Color(1, 0.12, 0.55, 1)
+shader_parameter/grid_color = Color(0, 0.9, 1, 1)
+shader_parameter/grid_base_color = Color(0.04, 0.02, 0.09, 1)
+shader_parameter/horizon_y = 0.52
+shader_parameter/grid_speed = 0.55
+shader_parameter/grid_scale = 14.0
+shader_parameter/pulse_speed = 1.6
+shader_parameter/star_density = 0.65
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
@@ -12,13 +26,13 @@ grow_vertical = 2
 script = ExtResource("1_title")
 
 [node name="Background" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_synth")
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.04, 0.05, 0.08, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1

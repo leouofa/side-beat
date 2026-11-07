@@ -347,6 +347,13 @@ func _test_arcade_menus_and_ui() -> void:
 	_assert(title_scene != null, "title_screen.tscn loads cleanly")
 	var title_inst := title_scene.instantiate()
 	add_child(title_inst)
+	_assert(title_inst.has_node("Background"), "Title screen has Background node")
+	var bg_rect := title_inst.get_node("Background") as ColorRect
+	_assert(bg_rect != null and bg_rect.material is ShaderMaterial, "Title screen Background has ShaderMaterial")
+	var shader_mat := bg_rect.material as ShaderMaterial
+	_assert(shader_mat.shader != null, "ShaderMaterial has valid shader")
+	_assert(shader_mat.shader.resource_path.ends_with("synthwave_cityline.gdshader"), "Background uses synthwave_cityline shader")
+	_assert(title_inst.get("_card_style") != null, "Title screen initialized menu glass backdrop style")
 	_assert(title_inst.has_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn"), "Title screen has StartTourBtn")
 	var start_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn") as Button
 	var lead_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/LeaderboardBtn") as Button

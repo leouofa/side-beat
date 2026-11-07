@@ -9,11 +9,14 @@ extends Control
 @onready var _quit_btn: Button = $MarginContainer/VBoxContainer/MenuContainer/QuitBtn
 @onready var _high_score_label: Label = $MarginContainer/VBoxContainer/Header/HighScoreLabel
 @onready var _prompt_label: Label = $MarginContainer/VBoxContainer/PromptLabel
+@onready var _menu_container: VBoxContainer = $MarginContainer/VBoxContainer/MenuContainer
 
 var _blink_timer: float = 0.0
+var _card_style: StyleBoxFlat
 
 
 func _ready() -> void:
+	_setup_menu_backdrop()
 	SynthwaveUI.apply_to_tree(self)
 	if SoundtrackManager:
 		SoundtrackManager.play_menu_track("title_theme", true)
@@ -67,3 +70,30 @@ func _on_how_to_play_pressed() -> void:
 
 func _on_quit_pressed() -> void:
 	get_tree().quit(0)
+
+
+func _setup_menu_backdrop() -> void:
+	_card_style = StyleBoxFlat.new()
+	_card_style.bg_color = Color(0.06, 0.04, 0.14, 0.82)
+	_card_style.border_color = Color("#3D1B63")
+	_card_style.set_border_width_all(2)
+	_card_style.set_corner_radius_all(10)
+	_card_style.shadow_color = Color(1.0, 0.08, 0.55, 0.22)
+	_card_style.shadow_size = 14
+	if _menu_container and not _menu_container.draw.is_connected(_on_menu_container_draw):
+		_menu_container.draw.connect(_on_menu_container_draw)
+		_menu_container.queue_redraw()
+
+
+func _on_menu_container_draw() -> void:
+	if _card_style and _menu_container:
+		var pad_h := 24.0
+		var pad_v := 18.0
+		var rect := Rect2(
+			-pad_h,
+			-pad_v,
+			_menu_container.size.x + pad_h * 2.0,
+			_menu_container.size.y + pad_v * 2.0
+		)
+		_menu_container.draw_style_box(_card_style, rect)
+
