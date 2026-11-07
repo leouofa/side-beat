@@ -34,83 +34,97 @@ OUT_PREV_DIR = os.path.join(ROOT_DIR, "assets", "previews")
 
 def author_god_combat_clips(arm_obj: bpy.types.Object, god_id: str) -> None:
     """Authors all 12 per_god_combat NLA actions with Startup / Active / Recovery frame windows."""
-    # light_1: crisp lead jab / quick slash
-    l1_wind = merge_pose(STANCE_BASE, {"chest": (6, 0, -14), "upper_arm.L": (-25, 20, 0), "lower_arm.L": (-95, 0, 0)})
-    l1_hit = merge_pose(STANCE_BASE, {"chest": (12, 0, 22), "upper_arm.L": (-88, 4, -5), "lower_arm.L": (-8, 0, 0)})
+    # light_1: crisp lead jab / quick slash (strict 2.5D planar profile)
+    l1_wind = merge_pose(STANCE_BASE, {
+        "chest": (-4, 0, 0), "upper_arm.L": (-25, 15, 0), "lower_arm.L": (-95, 0, 0),
+    })
+    l1_hit = merge_pose(STANCE_BASE, {
+        "hips": (-8, 0, 0), "spine_01": (-14, 0, 0), "chest": (-18, 0, 0),
+        "upper_arm.L": (-90, 0, 0), "lower_arm.L": (-6, 0, 0),
+    })
     author_nla_action(arm_obj, "light_1", [
         (1, l1_wind, None),
-        (4, l1_hit, {"hips": (0.0, -0.06, 0.0)}),
-        (9, l1_hit, {"hips": (0.0, -0.06, 0.0)}),
+        (4, l1_hit, {"hips": (0.0, -0.08, 0.0)}),
+        (9, l1_hit, {"hips": (0.0, -0.08, 0.0)}),
         (16, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # light_2: cross weapon/fist strike
-    l2_wind = merge_pose(STANCE_BASE, {"chest": (8, 0, 20), "upper_arm.R": (18, -28, 20), "lower_arm.R": (-70, 0, 0)})
-    l2_hit = merge_pose(STANCE_BASE, {"chest": (16, 0, -28), "upper_arm.R": (-92, -6, -15), "lower_arm.R": (-12, 0, 0)})
+    l2_wind = merge_pose(STANCE_BASE, {
+        "chest": (4, 0, 0), "upper_arm.R": (15, -20, 0), "lower_arm.R": (-70, 0, 0),
+    })
+    l2_hit = merge_pose(STANCE_BASE, {
+        "hips": (-10, 0, 0), "spine_01": (-16, 0, 0), "chest": (-20, 0, 0),
+        "upper_arm.R": (-95, -6, 0), "lower_arm.R": (-10, 0, 0),
+    })
     author_nla_action(arm_obj, "light_2", [
         (1, l2_wind, None),
-        (5, l2_hit, {"hips": (0.0, -0.10, 0.0)}),
-        (11, l2_hit, {"hips": (0.0, -0.10, 0.0)}),
+        (5, l2_hit, {"hips": (0.0, -0.12, 0.0)}),
+        (11, l2_hit, {"hips": (0.0, -0.12, 0.0)}),
         (19, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # light_3: combo ender sweep / wide cleave
-    l3_wind = merge_pose(STANCE_BASE, {"chest": (4, 0, -32), "upper_arm.R": (-65, -45, 35), "lower_arm.R": (-35, 0, 0)})
+    l3_wind = merge_pose(STANCE_BASE, {
+        "chest": (4, 0, 0), "upper_arm.R": (-65, -35, 0), "lower_arm.R": (-35, 0, 0),
+    })
     l3_hit = merge_pose(STANCE_BASE, {
-        "hips": (14, 0, 24), "chest": (18, 0, 34),
-        "upper_arm.R": (-85, 35, -45), "lower_arm.R": (-10, 0, 0),
-        "thigh.L": (-38, 0, 10),
+        "hips": (-14, 0, 0), "spine_01": (-20, 0, 0), "chest": (-24, 0, 0),
+        "upper_arm.R": (-90, 15, 0), "lower_arm.R": (-8, 0, 0),
+        "thigh.L": (-45, 0, 0), "shin.L": (50, 0, 0),
     })
     author_nla_action(arm_obj, "light_3", [
         (1, l3_wind, None),
-        (6, l3_hit, {"hips": (0.0, -0.16, -0.03)}),
-        (13, l3_hit, {"hips": (0.0, -0.16, -0.03)}),
+        (6, l3_hit, {"hips": (0.0, -0.18, -0.04)}),
+        (13, l3_hit, {"hips": (0.0, -0.18, -0.04)}),
         (24, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
-    # heavy_ground: high-impact overhead / thrust guard-breaker
+    # heavy_ground: high-impact overhead / thrust guard-breaker (leaned forward & driving down)
     hv_wind = merge_pose(STANCE_BASE, {
-        "spine_01": (-12, 0, 12), "chest": (-16, 0, 18),
-        "upper_arm.R": (-158, -18, 10), "lower_arm.R": (-35, 0, 0),
-        "upper_arm.L": (-135, 18, -10),
+        "spine_01": (8, 0, 0), "chest": (10, 0, 0), "head": (-6, 0, 0),
+        "upper_arm.R": (-165, -15, 0), "lower_arm.R": (-30, 0, 0),
+        "upper_arm.L": (-140, 15, 0), "lower_arm.L": (-20, 0, 0),
     })
     hv_slam = merge_pose(STANCE_BASE, {
-        "hips": (22, 0, -18), "spine_01": (24, 0, -12), "chest": (26, 0, -18),
-        "upper_arm.R": (-42, -8, -10), "lower_arm.R": (-12, 0, 0),
-        "upper_arm.L": (-38, 12, 10),
-        "thigh.L": (-48, 0, 8), "shin.L": (56, 0, 0),
+        "hips": (-14, 0, 0), "spine_01": (-24, 0, 0), "chest": (-28, 0, 0), "head": (12, 0, 0),
+        "upper_arm.R": (-85, -8, 0), "lower_arm.R": (-12, 0, 0),
+        "upper_arm.L": (-40, 12, 0), "lower_arm.L": (-10, 0, 0),
+        "thigh.L": (-52, 0, 0), "shin.L": (60, 0, 0),
+        "thigh.R": (25, 0, 0), "shin.R": (15, 0, 0),
     })
     author_nla_action(arm_obj, "heavy_ground", [
         (1, STANCE_BASE, None),
-        (8, hv_wind, {"hips": (0.0, 0.05, 0.04)}),
-        (13, hv_slam, {"hips": (0.0, -0.22, -0.10)}),
-        (21, hv_slam, {"hips": (0.0, -0.22, -0.10)}),
+        (8, hv_wind, {"hips": (0.0, 0.08, 0.04)}),
+        (13, hv_slam, {"hips": (0.0, -0.26, -0.12)}),
+        (21, hv_slam, {"hips": (0.0, -0.26, -0.12)}),
         (34, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # launcher_up: rising uppercut / skyward scoop
     up_crouch = merge_pose(STANCE_BASE, {
-        "hips": (18, 0, 16), "spine_01": (20, 0, 14),
-        "upper_arm.R": (24, -15, 10), "lower_arm.R": (-95, 0, 0),
-        "thigh.L": (-52, 0, 8), "shin.L": (72, 0, 0),
+        "hips": (-16, 0, 0), "spine_01": (-16, 0, 0),
+        "upper_arm.R": (20, -10, 0), "lower_arm.R": (-90, 0, 0),
+        "thigh.L": (-52, 0, 0), "shin.L": (72, 0, 0),
     })
     up_rise = merge_pose(STANCE_BASE, {
-        "hips": (-8, 0, -20), "spine_01": (-14, 0, -18), "chest": (-16, 0, -22),
-        "upper_arm.R": (-152, -8, -12), "lower_arm.R": (-16, 0, 0),
-        "thigh.R": (-45, 0, -8), "shin.R": (55, 0, 0),
+        "hips": (-6, 0, 0), "spine_01": (-10, 0, 0), "chest": (-12, 0, 0),
+        "upper_arm.R": (-160, -6, 0), "lower_arm.R": (-12, 0, 0),
+        "thigh.R": (-45, 0, 0), "shin.R": (55, 0, 0),
     })
     author_nla_action(arm_obj, "launcher_up", [
         (1, up_crouch, {"hips": (0.0, 0.0, -0.16)}),
-        (7, up_rise, {"hips": (0.0, -0.12, 0.16)}),
-        (15, up_rise, {"hips": (0.0, -0.12, 0.18)}),
+        (7, up_rise, {"hips": (0.0, -0.10, 0.20)}),
+        (15, up_rise, {"hips": (0.0, -0.10, 0.22)}),
         (28, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # air_combo_1
     ac1_hit = merge_pose(STANCE_BASE, {
-        "thigh.L": (-62, 0, 12), "shin.L": (72, 0, 0),
-        "upper_arm.L": (-95, 10, -15), "lower_arm.L": (-10, 0, 0),
-        "upper_arm.R": (-35, -25, 20),
+        "spine_01": (-12, 0, 0), "chest": (-14, 0, 0),
+        "thigh.L": (-62, 0, 0), "shin.L": (72, 0, 0),
+        "upper_arm.L": (-95, 10, 0), "lower_arm.L": (-10, 0, 0),
+        "upper_arm.R": (-35, -20, 0),
     })
     author_nla_action(arm_obj, "air_combo_1", [
         (1, STANCE_BASE, None),
@@ -121,9 +135,9 @@ def author_god_combat_clips(arm_obj: bpy.types.Object, god_id: str) -> None:
 
     # air_combo_2
     ac2_hit = merge_pose(STANCE_BASE, {
-        "chest": (14, 0, -26),
-        "thigh.R": (-78, 0, -8), "shin.R": (12, 0, 0),
-        "upper_arm.R": (-105, -8, -18), "lower_arm.R": (-8, 0, 0),
+        "spine_01": (-14, 0, 0), "chest": (-18, 0, 0),
+        "thigh.R": (-78, 0, 0), "shin.R": (12, 0, 0),
+        "upper_arm.R": (-105, -8, 0), "lower_arm.R": (-8, 0, 0),
     })
     author_nla_action(arm_obj, "air_combo_2", [
         (1, ac1_hit, None),
@@ -134,11 +148,11 @@ def author_god_combat_clips(arm_obj: bpy.types.Object, god_id: str) -> None:
 
     # air_dive_or_slam (Horus Falcon Dive / Endor Hammer Drop / Ir Dive Slash / Osiris Flail Drop)
     dive_pose = merge_pose(STANCE_BASE, {
-        "hips": (38, 0, 0), "spine_01": (16, 0, 0),
-        "thigh.R": (-42, 0, -6), "shin.R": (5, 0, 0),
-        "thigh.L": (22, 0, 10), "shin.L": (68, 0, 0),
-        "upper_arm.R": (-135 if god_id != "horus" else 35, -22, 15),
-        "upper_arm.L": (35, 22, -15),
+        "hips": (-20, 0, 0), "spine_01": (-24, 0, 0), "chest": (-24, 0, 0),
+        "thigh.R": (-42, 0, 0), "shin.R": (5, 0, 0),
+        "thigh.L": (22, 0, 0), "shin.L": (68, 0, 0),
+        "upper_arm.R": (-135 if god_id != "horus" else 35, -20, 0),
+        "upper_arm.L": (35, 20, 0),
     })
     author_nla_action(arm_obj, "air_dive_or_slam", [
         (1, STANCE_BASE, None),
@@ -149,67 +163,68 @@ def author_god_combat_clips(arm_obj: bpy.types.Object, god_id: str) -> None:
 
     # pantheon_special_1
     sp1_wind = merge_pose(STANCE_BASE, {
-        "spine_01": (-16, 0, 20), "upper_arm.R": (-145, -30, 20), "upper_arm.L": (-110, 30, -20),
+        "spine_01": (10, 0, 0), "chest": (12, 0, 0),
+        "upper_arm.R": (-150, -25, 0), "upper_arm.L": (-110, 25, 0),
     })
     sp1_release = merge_pose(STANCE_BASE, {
-        "hips": (20, 0, -22), "chest": (24, 0, -24),
-        "upper_arm.R": (-75, 18, -30), "lower_arm.R": (-5, 0, 0),
-        "upper_arm.L": (-65, 25, -15),
-        "thigh.L": (-50, 0, 10), "shin.L": (58, 0, 0),
+        "hips": (-16, 0, 0), "spine_01": (-22, 0, 0), "chest": (-26, 0, 0),
+        "upper_arm.R": (-80, 15, 0), "lower_arm.R": (-5, 0, 0),
+        "upper_arm.L": (-65, 20, 0),
+        "thigh.L": (-50, 0, 0), "shin.L": (58, 0, 0),
     })
     author_nla_action(arm_obj, "pantheon_special_1", [
-        (1, sp1_wind, {"hips": (0.0, 0.04, 0.06)}),
-        (8, sp1_release, {"hips": (0.0, -0.20, -0.08)}),
-        (20, sp1_release, {"hips": (0.0, -0.20, -0.08)}),
+        (1, sp1_wind, {"hips": (0.0, 0.06, 0.04)}),
+        (8, sp1_release, {"hips": (0.0, -0.22, -0.08)}),
+        (20, sp1_release, {"hips": (0.0, -0.22, -0.08)}),
         (32, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # pantheon_special_2 (Counter stance for Ir, Tackle for Endor, Spin for Osiris, Dive/Ascent for Horus)
     sp2_a = merge_pose(STANCE_BASE, {
-        "hips": (16, 0, 28), "chest": (18, 0, 32),
-        "upper_arm.L": (-88, 12, -28), "lower_arm.L": (-45, 0, 0),
-        "upper_arm.R": (-88, -12, 28), "lower_arm.R": (-20, 0, 0),
+        "hips": (-12, 0, 0), "spine_01": (-16, 0, 0), "chest": (-18, 0, 0),
+        "upper_arm.L": (-88, 12, 0), "lower_arm.L": (-45, 0, 0),
+        "upper_arm.R": (-88, -12, 0), "lower_arm.R": (-20, 0, 0),
     })
     sp2_b = merge_pose(STANCE_BASE, {
-        "hips": (16, 0, -32), "chest": (18, 0, -36),
-        "upper_arm.R": (-96, 8, -32), "lower_arm.R": (-8, 0, 0),
-        "upper_arm.L": (-40, 35, -15),
+        "hips": (-18, 0, 0), "spine_01": (-24, 0, 0), "chest": (-28, 0, 0),
+        "upper_arm.R": (-96, 8, 0), "lower_arm.R": (-8, 0, 0),
+        "upper_arm.L": (-40, 30, 0),
     })
     author_nla_action(arm_obj, "pantheon_special_2", [
         (1, sp2_a, {"hips": (0.0, -0.08, -0.04)}),
-        (9, sp2_b, {"hips": (0.0, -0.22, 0.02)}),
-        (20, sp2_b, {"hips": (0.0, -0.22, 0.02)}),
+        (9, sp2_b, {"hips": (0.0, -0.24, 0.0)}),
+        (20, sp2_b, {"hips": (0.0, -0.24, 0.0)}),
         (32, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # pantheon_super (Ascendant mythic invocation + unleash)
     sup_charge = merge_pose(STANCE_BASE, {
-        "hips": (-10, 0, 0), "spine_01": (-16, 0, 0), "chest": (-20, 0, 0), "head": (-18, 0, 0),
-        "upper_arm.L": (-145, 42, -20), "lower_arm.L": (-25, 0, 0),
-        "upper_arm.R": (-145, -42, 20), "lower_arm.R": (-25, 0, 0),
+        "hips": (10, 0, 0), "spine_01": (14, 0, 0), "chest": (16, 0, 0), "head": (-12, 0, 0),
+        "upper_arm.L": (-145, 35, 0), "lower_arm.L": (-25, 0, 0),
+        "upper_arm.R": (-145, -35, 0), "lower_arm.R": (-25, 0, 0),
     })
     sup_unleash = merge_pose(STANCE_BASE, {
-        "hips": (18, 0, 0), "spine_01": (18, 0, 0), "chest": (22, 0, 0),
-        "upper_arm.L": (-88, 22, -10), "lower_arm.L": (-5, 0, 0),
-        "upper_arm.R": (-92, -12, 10), "lower_arm.R": (-5, 0, 0),
-        "thigh.L": (-44, 0, 12), "shin.L": (52, 0, 0),
+        "hips": (-18, 0, 0), "spine_01": (-24, 0, 0), "chest": (-28, 0, 0),
+        "upper_arm.L": (-88, 18, 0), "lower_arm.L": (-5, 0, 0),
+        "upper_arm.R": (-92, -10, 0), "lower_arm.R": (-5, 0, 0),
+        "thigh.L": (-48, 0, 0), "shin.L": (54, 0, 0),
     })
     author_nla_action(arm_obj, "pantheon_super", [
         (1, STANCE_BASE, None),
         (10, sup_charge, {"hips": (0.0, 0.0, 0.14)}),
-        (20, sup_unleash, {"hips": (0.0, -0.18, -0.04)}),
-        (38, sup_unleash, {"hips": (0.0, -0.18, -0.04)}),
+        (20, sup_unleash, {"hips": (0.0, -0.22, -0.04)}),
+        (38, sup_unleash, {"hips": (0.0, -0.22, -0.04)}),
         (50, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
 
     # morph_entry_pose (Dynamic 10-frame snap pose on Shared-Soul Morph)
     morph_snap = merge_pose(STANCE_BASE, {
-        "chest": (12, 0, -22),
-        "upper_arm.R": (-78, -28, 22), "lower_arm.R": (-35, 0, 0),
-        "upper_arm.L": (-55, 32, -18),
+        "spine_01": (-10, 0, 0), "chest": (-14, 0, 0),
+        "upper_arm.R": (-78, -25, 0), "lower_arm.R": (-35, 0, 0),
+        "upper_arm.L": (-55, 28, 0),
     })
     author_nla_action(arm_obj, "morph_entry_pose", [
-        (1, morph_snap, {"hips": (0.0, -0.04, 0.03)}),
+        (1, morph_snap, {"hips": (0.0, -0.04, 0.02)}),
         (6, morph_snap, {"hips": (0.0, -0.04, 0.02)}),
         (12, STANCE_BASE, {"hips": (0.0, 0.0, 0.0)}),
     ])
