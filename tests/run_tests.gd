@@ -27,6 +27,7 @@ func _ready() -> void:
 	_test_stages_5_to_7_generation()
 	_test_hitstop_manager_camera_shake()
 	_test_arcade_menus_and_ui()
+	_test_synthwave_ui_styling()
 	_test_stage_grading_math()
 	_test_continue_credit_fairness()
 	_test_save_persistence()
@@ -456,6 +457,52 @@ func _test_arcade_menus_and_ui() -> void:
 	hud.show_stage_clear_summary(final_stage_summary)
 	_assert(hud._next_stage_btn.text == "COMPLETE TOUR & VIEW CREDITS", "Final stage clear button displays 'COMPLETE TOUR & VIEW CREDITS'")
 	_assert(not hud._replay_stage_btn.visible, "Final stage clear hides restart current city button")
+	hud.free()
+
+
+func _test_synthwave_ui_styling() -> void:
+	# 1. Custom Synthwave Theme Resource
+	var theme := load("res://assets/synthwave_theme.tres") as Theme
+	_assert(theme != null, "synthwave_theme.tres loads cleanly")
+
+	var hover_sb := theme.get_stylebox("hover", "Button") as StyleBoxFlat
+	_assert(hover_sb != null, "Theme defines Button hover StyleBoxFlat")
+	_assert(hover_sb.border_color.is_equal_approx(SynthwaveUI.COLOR_BORDER_HOVER), "Button hover border is neon magenta #FF007F")
+	_assert(hover_sb.shadow_size > 0, "Button hover style has neon cyan shadow glow")
+	_assert(theme.get_color("font_hover_color", "Button").is_equal_approx(SynthwaveUI.COLOR_TEXT_HOVER), "Button hover text is neon cyan")
+
+	# 2. Title Screen buttons have pointing hand cursor
+	var title_scene := load("res://scenes/ui/title_screen.tscn") as PackedScene
+	var title_inst := title_scene.instantiate()
+	add_child(title_inst)
+	var start_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/StartTourBtn") as Button
+	var quit_btn := title_inst.get_node("MarginContainer/VBoxContainer/MenuContainer/QuitBtn") as Button
+	_assert(start_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "StartTourBtn has pointing hand cursor")
+	_assert(quit_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "QuitBtn has pointing hand cursor")
+	title_inst.free()
+
+	# 3. God Select Screen cards and buttons have pointing hand cursor
+	var godsel_scene := load("res://scenes/ui/god_select_screen.tscn") as PackedScene
+	var godsel_inst := godsel_scene.instantiate()
+	add_child(godsel_inst)
+	var cards: Array = godsel_inst.get("_card_panels")
+	_assert(cards.size() == 4, "God select screen generated 4 god cards")
+	var all_cards_pointer := true
+	for c in cards:
+		if c.mouse_default_cursor_shape != Control.CURSOR_POINTING_HAND:
+			all_cards_pointer = false
+	_assert(all_cards_pointer, "All god select cards have pointing hand cursor")
+	var back_btn := godsel_inst.get_node("MarginContainer/VBoxContainer/Header/BackBtn") as Button
+	_assert(back_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "God select BackBtn has pointing hand cursor")
+	godsel_inst.free()
+
+	# 4. Arcade HUD modal cards and buttons have pointing hand cursor & synthwave styles
+	var hud := ArcadeHud.new()
+	add_child(hud)
+	var pause_p := hud.get("_pause_panel") as PanelContainer
+	_assert(pause_p != null and pause_p.has_theme_stylebox_override("panel"), "Pause card has synthwave StyleBox override")
+	_assert(hud._next_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Next stage button has pointing hand cursor")
+	_assert(hud._replay_stage_btn.mouse_default_cursor_shape == Control.CURSOR_POINTING_HAND, "Replay stage button has pointing hand cursor")
 	hud.free()
 
 

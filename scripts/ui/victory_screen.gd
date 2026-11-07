@@ -12,6 +12,7 @@ var _scroll_speed: float = 38.0
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
 	if SoundtrackManager:
 		# Play the triumphant Big Zeus track!
 		SoundtrackManager.play_track("res://tracks/Big Zeus.mp3", "WORLD TOUR CONQUEST VICTORY", true)

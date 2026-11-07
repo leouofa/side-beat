@@ -49,6 +49,7 @@ text = "SIDE BEAT — 37-TRACK ARCADE JUKEBOX"
 [node name="BackBtn" type="Button" parent="MarginContainer/VBoxContainer/Header"]
 layout_mode = 2
 custom_minimum_size = Vector2(140, 40)
+mouse_default_cursor_shape = 2
 text = "< ESC: BACK"
 
 [node name="HSplitContainer" type="HSplitContainer" parent="MarginContainer/VBoxContainer"]
@@ -108,17 +109,20 @@ theme_override_constants/separation = 12
 [node name="PrevBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
 custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "|< PREV"
 
 [node name="PlayPauseBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
 custom_minimum_size = Vector2(120, 44)
 layout_mode = 2
 size_flags_horizontal = 3
+mouse_default_cursor_shape = 2
 text = "PAUSE"
 
 [node name="NextBtn" type="Button" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard/ControlsRow"]
 custom_minimum_size = Vector2(100, 44)
 layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "NEXT >|"
 
 [node name="VolumeRow" type="HBoxContainer" parent="MarginContainer/VBoxContainer/HSplitContainer/RightPanel/PlayerCard"]

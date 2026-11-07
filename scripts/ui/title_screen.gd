@@ -14,6 +14,7 @@ var _blink_timer: float = 0.0
 
 
 func _ready() -> void:
+	SynthwaveUI.apply_to_tree(self)
 	if SoundtrackManager:
 		SoundtrackManager.play_menu_track("title_theme", true)
 

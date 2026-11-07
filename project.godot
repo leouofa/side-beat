@@ -35,6 +35,10 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[gui]
+
+theme/custom="res://assets/synthwave_theme.tres"
+
 [layer_names]
 
 3d_physics/layer_1="WorldBounds"
