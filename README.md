@@ -30,7 +30,7 @@ flowchart TD
     end
 
     subgraph Combat & Physics Engine
-        SSP --> JOLT[Jolt 3D Physics\nZ-Belt Corridor [-3.2m, +3.2m]]
+        SSP --> JOLT["Jolt 3D Physics\nZ-Belt Corridor [-3.2m, +3.2m]"]
         SSP --> RES[ResonanceTracker\nCross-Pantheon 1x-4x Combo Multiplier]
         SSP --> HIT[Hitbox3D / Hurtbox3D\nActive Frames & Hit Registrations]
         HIT --> ENM[WaveEnemy & BossController\nFSM AI & Super-Armor]
